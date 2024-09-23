@@ -1,0 +1,24 @@
+2024-09-23T16:10:46.955-03:00  INFO 114382 --- [projeto-web] [restartedMain] c.s.projeto_web.ProjetoWebApplication    : Starting ProjetoWebApplication using Java 17.0.12 with PID 114382 (/home/alison/Área de Trabalho/Work_Space/web II/projeto-web/target/classes started by alison in /home/alison/Área de Trabalho/Work_Space/web II/projeto-web)
+2024-09-23T16:10:46.956-03:00  INFO 114382 --- [projeto-web] [restartedMain] c.s.projeto_web.ProjetoWebApplication    : No active profile set, falling back to 1 default profile: "default"
+2024-09-23T16:10:47.147-03:00  INFO 114382 --- [projeto-web] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-09-23T16:10:47.150-03:00  INFO 114382 --- [projeto-web] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 2 ms. Found 0 JPA repository interfaces.
+2024-09-23T16:10:47.254-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-09-23T16:10:47.256-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-09-23T16:10:47.256-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.30]
+2024-09-23T16:10:47.266-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-09-23T16:10:47.266-03:00  INFO 114382 --- [projeto-web] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 308 ms
+2024-09-23T16:10:47.281-03:00  INFO 114382 --- [projeto-web] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2024-09-23T16:10:47.282-03:00  INFO 114382 --- [projeto-web] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:a7bd078a-a97d-48ab-a48d-6bf9beb51cd7 user=SA
+2024-09-23T16:10:47.283-03:00  INFO 114382 --- [projeto-web] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2024-09-23T16:10:47.283-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:a7bd078a-a97d-48ab-a48d-6bf9beb51cd7'
+2024-09-23T16:10:47.315-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-09-23T16:10:47.319-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-09-23T16:10:47.331-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-09-23T16:10:47.348-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-09-23T16:10:47.348-03:00  INFO 114382 --- [projeto-web] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-09-23T16:10:47.373-03:00  WARN 114382 --- [projeto-web] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-09-23T16:10:47.465-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2024-09-23T16:10:47.470-03:00  INFO 114382 --- [projeto-web] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2024-09-23T16:10:47.473-03:00  INFO 114382 --- [projeto-web] [restartedMain] c.s.projeto_web.ProjetoWebApplication    : Started ProjetoWebApplication in 0.573 seconds (process running for 341.27)
+2024-09-23T16:10:47.475-03:00  INFO 114382 --- [projeto-web] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2024-09-23T16:10:47.476-03:00  INFO 114382 --- [projeto-web] [restartedMain] c.s.projeto_web.ProjetoWebApplication    : Aplicação iniciada
