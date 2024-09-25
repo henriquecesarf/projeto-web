@@ -1,20 +1,33 @@
 version: "3.7"
 services:
-  api_service:
+  api_service_luggycar:
     build: .
     restart: always
     ports:
       - 8080:8080
     depends_on:
       - maria_db
-    command: sh -c './wait-for mysql_db:3306 -- npm start'
+    command: sh -c './wait-for maria_db:3306 -- java -jar app.jar'
+
   maria_db:
     image: "mariadb:10.5.8"
     restart: always
     ports:
-      - 3307:3306
+      - 3306:3306
     environment:
       MYSQL_DATABASE: java_to_dev_app_db
       MYSQL_USER: java_to_dev
       MYSQL_PASSWORD: nE5kMc7JCGNqwDQM
       MYSQL_ROOT_PASSWORD: nE5kMc7JCGNqwDQN
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8081:80
+    depends_on:
+      - maria_db
+    environment:
+      PMA_HOST: maria_db
+      PMA_USER: java_to_dev
+      PMA_PASSWORD: nE5kMc7JCGNqwDQM
