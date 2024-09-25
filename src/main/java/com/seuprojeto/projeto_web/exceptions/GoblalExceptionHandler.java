@@ -11,11 +11,11 @@ import java.util.Map;
 @ControllerAdvice
 public class GoblalExceptionHandler {
 
-    @ExceptionHandler({ SinisterNotFoundException.class, TableEmptyException.class })
+    @ExceptionHandler({ FieldNotFoundException.class, TableEmptyException.class })
     public ResponseEntity<Map<String, String>> handleAllExceptions(Exception exception) {
         Map<String, String> errorResponse = new HashMap<>();
 
-        if (exception instanceof SinisterNotFoundException) {
+        if (exception instanceof FieldNotFoundException) {
             errorResponse.put("message", exception.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }else if(exception instanceof TableEmptyException){
