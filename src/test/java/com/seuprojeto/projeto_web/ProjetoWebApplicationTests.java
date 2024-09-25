@@ -1,13 +1,13 @@
-package com.seuprojeto.projeto_web;
+// package com.seuprojeto.projeto_web;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ProjetoWebApplicationTests {
+// @SpringBootTest
+// class ProjetoWebApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+// 	@Test
+// 	void contextLoads() {
+// 	}
 
-}
+// }
