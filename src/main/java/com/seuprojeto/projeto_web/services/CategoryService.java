@@ -19,6 +19,7 @@ public class CategoryService {
     @Autowired
     private ModelMapper modelMapper;
 
+
     public CategoryRequest createCategory(CategoryRequest categoryDTO) {
         if (categoryRepository.existsByName(categoryDTO.getName())) {
             throw new IllegalArgumentException("A category with this name already exists.");
