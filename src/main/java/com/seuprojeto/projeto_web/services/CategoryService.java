@@ -15,9 +15,7 @@ public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    ModelMapper modelMapper = new ModelMapper();
 
 
     public CategoryRequest createCategory(CategoryRequest categoryDTO) {
