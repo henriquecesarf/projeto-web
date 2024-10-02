@@ -19,7 +19,7 @@ public class SinisterService {
     @Autowired
     private SinisterRepository sinisterRepository;
 
-    public List<SinisterEntity> getAll() {
+    public List<SinisterEntity> findAllSinisters() {
         List<SinisterEntity> sinisterEntity = sinisterRepository.findAll();
         if(sinisterEntity.isEmpty()){
             throw new TableEmptyException("No data registered");
@@ -27,7 +27,7 @@ public class SinisterService {
         return sinisterEntity;
     }
 
-    public SinisterRequest getOne(Long id){
+    public SinisterRequest findSinisterById(Long id){
         Optional<SinisterEntity> sinisterOptional = sinisterRepository.findById(id);
         if(sinisterOptional.isEmpty()){
             throw new FieldNotFoundException("Sinister with ID " + id + " not found");

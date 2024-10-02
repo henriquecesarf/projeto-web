@@ -24,14 +24,14 @@ public class OptionalController {
     private OptionalService optionalService;
 
     @GetMapping
-    public ResponseEntity<List<OptionalEntity>> getAllUsers() throws TableEmptyException {
-        List<OptionalEntity> optional = optionalService.getAll();
+    public ResponseEntity<List<OptionalEntity>> getAllOptionals() throws TableEmptyException {
+        List<OptionalEntity> optional = optionalService.findAllOptionals();
         return ResponseEntity.ok(optional);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OptionalRequest> findById(@PathVariable Long id) throws FieldNotFoundException {
-        OptionalRequest optional = optionalService.getOne(id);
+    public ResponseEntity<OptionalRequest> getById(@PathVariable Long id) throws FieldNotFoundException {
+        OptionalRequest optional = optionalService.findOptionalById(id);
         return ResponseEntity.ok(optional);
     }
 

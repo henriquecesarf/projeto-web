@@ -23,14 +23,14 @@ public class SinisterController {
     private SinisterService sinisterService;
 
     @GetMapping
-    public ResponseEntity<List<SinisterEntity>> getAllUsers() throws TableEmptyException {
-        List<SinisterEntity> sinisters = sinisterService.getAll();
+    public ResponseEntity<List<SinisterEntity>> getAllSinister() throws TableEmptyException {
+        List<SinisterEntity> sinisters = sinisterService.findAllSinisters();
         return ResponseEntity.ok(sinisters);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SinisterRequest> findById(@PathVariable Long id) throws FieldNotFoundException {
-        SinisterRequest sinister = sinisterService.getOne(id);
+    public ResponseEntity<SinisterRequest> getById(@PathVariable Long id) throws FieldNotFoundException {
+        SinisterRequest sinister = sinisterService.findSinisterById(id);
         return ResponseEntity.ok(sinister);
     }
 

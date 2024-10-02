@@ -18,7 +18,7 @@ public class OptionalService {
     @Autowired
     private OptionalRepository optionalRepository;
 
-    public List<OptionalEntity> getAll() {
+    public List<OptionalEntity> findAllOptionals() {
         List<OptionalEntity> optionalEntity = optionalRepository.findAll();
         if(optionalEntity.isEmpty()){
             throw new TableEmptyException("No data registered");
@@ -26,7 +26,7 @@ public class OptionalService {
         return optionalEntity;
     }
 
-    public OptionalRequest getOne(Long id){
+    public OptionalRequest findOptionalById(Long id){
         Optional<OptionalEntity> optionalOptional = optionalRepository.findById(id);
         if(optionalOptional.isEmpty()){
             throw new FieldNotFoundException("Optional with ID " + id + " not found");
