@@ -20,13 +20,19 @@ public class GlobalExceptionHandler {
         if (exception instanceof FieldNotFoundException) {
             errorResponse.put("message", exception.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }else if(exception instanceof TableEmptyException){
+        }
+
+        if(exception instanceof TableEmptyException){
             errorResponse.put("message", exception.getMessage());
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(errorResponse);
-        }else if(exception instanceof DuplicateRegisterException){
+        }
+
+        if(exception instanceof DuplicateRegisterException){
             errorResponse.put("message", exception.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }else if(exception instanceof FieldInvalidException){
+        }
+
+        if(exception instanceof FieldInvalidException){
             errorResponse.put("message", exception.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
@@ -38,7 +44,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errorResponse = new HashMap<>();
 
-        // Obtém o primeiro erro de campo encontrado
         FieldError fieldError = ex.getBindingResult().getFieldError();
         if (fieldError != null) {
             errorResponse.put("field", fieldError.getField());
