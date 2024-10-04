@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequestMapping("api/client")
 public class ClientController {
@@ -25,14 +24,18 @@ public class ClientController {
 
     @GetMapping
     public ResponseEntity<List<ClientEntity>> getAllClients() throws TableEmptyException {
-        List<ClientEntity> client = clientService.findAllClients();
-        return ResponseEntity.ok(client);
+        List<ClientEntity> clients = clientService.findAllClients();
+        return ResponseEntity.ok(clients);
     }
 
     @PostMapping
-    public ResponseEntity<ClientRequest> createCategory(@RequestBody ClientRequest clientRequest) {
-        ClientRequest newClient = clientService.createCategory(clientRequest);
-        return ResponseEntity.ok(newClient);
+    public ResponseEntity<?> createClient(@RequestBody ClientRequest clientRequest) {
+        try {
+            ClientRequest newClient = clientService.createCategory(clientRequest);
+            return ResponseEntity.ok("Cliente criado com sucesso: " + newClient);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("O CPF fornecido é inválido.");
+        }
     }
 
 }

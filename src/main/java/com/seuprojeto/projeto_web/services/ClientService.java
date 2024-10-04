@@ -10,6 +10,7 @@ import com.seuprojeto.projeto_web.entities.ClientEntity;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.repositories.ClientRepository;
 import com.seuprojeto.projeto_web.requests.ClientRequest;
+import com.seuprojeto.projeto_web.validators.CPFValidator;
 
 @Service
 public class ClientService {
@@ -27,6 +28,10 @@ public class ClientService {
     }
 
     public ClientRequest createCategory(ClientRequest clientRequest) {
+        if (!CPFValidator.isValidCPF(clientRequest.getCpf())) {
+            throw new IllegalArgumentException("CPF inválido!");
+        }
+
         ClientEntity clientEntity = modelMapper.map(clientRequest, ClientEntity.class);
         clientRepository.save(clientEntity);
         return modelMapper.map(clientEntity, ClientRequest.class);
