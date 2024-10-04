@@ -13,7 +13,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({ FieldNotFoundException.class, TableEmptyException.class, FieldInvalid.class })
+    @ExceptionHandler({ FieldNotFoundException.class, TableEmptyException.class, DuplicateRegisterException.class })
     public ResponseEntity<Map<String, String>> handleAllExceptions(Exception exception) {
         Map<String, String> errorResponse = new HashMap<>();
 
@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
         }else if(exception instanceof TableEmptyException){
             errorResponse.put("message", exception.getMessage());
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(errorResponse);
-        }else if(exception instanceof FieldInvalid){
+        }else if(exception instanceof DuplicateRegisterException){
             errorResponse.put("message", exception.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }

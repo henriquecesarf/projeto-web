@@ -1,6 +1,7 @@
 package com.seuprojeto.projeto_web.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,15 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seuprojeto.projeto_web.entities.ClientEntity;
-import com.seuprojeto.projeto_web.exceptions.FieldInvalid;
+import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
 import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.requests.ClientRequest;
 import com.seuprojeto.projeto_web.services.ClientService;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -40,9 +44,26 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<ClientRequest> createCategory(@Validated @RequestBody ClientRequest clientRequest) throws FieldInvalid {
-        ClientRequest newClient = clientService.createCategory(clientRequest);
+    public ResponseEntity<ClientRequest> postClient(@Validated @RequestBody ClientRequest clientRequest) throws DuplicateRegisterException {
+        ClientRequest newClient = clientService.createClient(clientRequest);
         return ResponseEntity.ok(newClient);
     }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
+        clientService.deleteClientbyId(id);
+        return ResponseEntity.noContent().build();
+    }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ClientRequest> updateClient(@PathVariable Long id, @RequestBody ClientRequest clientRequest) {
+        ClientRequest updatedClient = clientService.updateClientById(id, clientRequest);
+        return ResponseEntity.ok(updatedClient);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ClientRequest> partialUpdateClient(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        ClientRequest updatedClient = clientService.partialUpdateClientById(id, updates);
+        return ResponseEntity.ok(updatedClient);
+    }
 }
