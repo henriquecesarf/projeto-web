@@ -3,17 +3,21 @@ package com.seuprojeto.projeto_web.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import java.time.LocalDate;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.seuprojeto.projeto_web.entities.ClientEntity;
 import com.seuprojeto.projeto_web.enums.CnhCategory;
 import com.seuprojeto.projeto_web.enums.Sexo;
 import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
+import com.seuprojeto.projeto_web.exceptions.FieldInvalidException;
 import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.repositories.ClientRepository;
@@ -24,6 +28,9 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
     ModelMapper modelMapper = new ModelMapper();
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     public List<ClientEntity> findAllClients() {
         List<ClientEntity> clientEntity = clientRepository.findAll();
@@ -43,6 +50,8 @@ public class ClientService {
     }
 
     public ClientRequest createClient(ClientRequest clientRequest) {
+
+        validateCep(clientRequest.getCep());
 
         boolean clientExists = clientRepository.findByEmail(clientRequest.getEmail()) != null ||
         clientRepository.findByCpf(clientRequest.getCpf()) != null ||
@@ -142,6 +151,21 @@ public class ClientService {
 
         clientRepository.save(clientEntity);
         return modelMapper.map(clientEntity, ClientRequest.class);
+    }
+
+    public void validateCep(String cep) {
+
+        if (!Pattern.matches("\\d{8}", cep)) {
+            throw new FieldInvalidException("O Cep deve conter apenas 8 caracteres, sendo eles números");
+        }
+
+        String url = "https://viacep.com.br/ws/" + cep + "/json/";
+
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+        if (response.getBody().contains("\"erro\": \"true\"")) {
+            throw new FieldInvalidException("CEP inválido: " + cep);
+        }
     }
 
 }
