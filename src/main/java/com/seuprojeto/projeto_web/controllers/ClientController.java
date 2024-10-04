@@ -4,14 +4,19 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seuprojeto.projeto_web.entities.ClientEntity;
+import com.seuprojeto.projeto_web.exceptions.FieldInvalid;
+import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.requests.ClientRequest;
 import com.seuprojeto.projeto_web.services.ClientService;
+
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -28,14 +33,16 @@ public class ClientController {
         return ResponseEntity.ok(clients);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ClientRequest> getById(@PathVariable Long id) throws FieldNotFoundException {
+        ClientRequest client = clientService.findClientById(id);
+        return ResponseEntity.ok(client);
+    }
+
     @PostMapping
-    public ResponseEntity<?> createClient(@RequestBody ClientRequest clientRequest) {
-        try {
-            ClientRequest newClient = clientService.createCategory(clientRequest);
-            return ResponseEntity.ok("Cliente criado com sucesso: " + newClient);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("O CPF fornecido é inválido.");
-        }
+    public ResponseEntity<ClientRequest> createCategory(@Validated @RequestBody ClientRequest clientRequest) throws FieldInvalid {
+        ClientRequest newClient = clientService.createCategory(clientRequest);
+        return ResponseEntity.ok(newClient);
     }
 
 }

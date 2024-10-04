@@ -2,6 +2,11 @@ package com.seuprojeto.projeto_web.requests;
 
 import java.time.LocalDate;
 
+import org.hibernate.validator.constraints.br.CPF;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import com.seuprojeto.projeto_web.enums.CnhCategory;
 import com.seuprojeto.projeto_web.enums.Sexo;
 
@@ -12,20 +17,51 @@ import lombok.Setter;
 @Getter
 public class ClientRequest {
 
+    @NotBlank(message = "Nome é obrigatório")
     private String name;
+
+    @NotBlank(message = "Sobrenome é obrigatório")
     private String surname;
+
+    @NotBlank(message = "CPF é obrigatório")
+    @CPF(message = "CPF deve ser válido")
     private String cpf;
+
+    @NotBlank(message = "Email é obrigatório")
+    @Email(message = "Email deve ser válido")
     private String email;
+
+    @NotNull(message = "Sexo é obrigatório")
     private Sexo sexo;
+    
+    @NotNull(message = "Data Nascimento é obrigatório")
     private LocalDate dtNascimento;
+
+    @NotBlank(message = "CNH é obrigatório")
     private String cnh;
+
+    @NotNull(message = "Categoria CNH é obrigatório")
     private CnhCategory cnhCategory;
+
+    @NotNull(message = "Data Vencimento CNH é obrigatório")
     private LocalDate cnhDtMaturity;
+
+    @NotBlank(message = "CEP é obrigatório")
     private String cep;
+
+    @NotBlank(message = "Endereço é obrigatório")
     private String address;
+
+    @NotBlank(message = "Pais é obrigatório")
     private String country;
+
+    @NotBlank(message = "Cidade é obrigatório")
     private String city;
+
+    @NotBlank(message = "Estado é obrigatório")
     private String state;
+
+    @NotBlank(message = "Complemento é obrigatório")
     private String complement;
 
     public ClientRequest() {}
