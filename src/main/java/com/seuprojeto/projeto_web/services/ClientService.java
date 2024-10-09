@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 
 import java.time.LocalDate;
 
@@ -21,6 +23,7 @@ import com.seuprojeto.projeto_web.exceptions.FieldInvalidException;
 import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.repositories.ClientRepository;
+import com.seuprojeto.projeto_web.repositories.RentalRepository;
 import com.seuprojeto.projeto_web.requests.ClientRequest;
 @Service
 public class ClientService {
@@ -32,22 +35,38 @@ public class ClientService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public List<ClientEntity> findAllClients() {
-        List<ClientEntity> clientEntity = clientRepository.findAll();
-        if(clientEntity.isEmpty()){
+    @Autowired
+    private RentalRepository rentalRepository;
+
+    public List<ClientRequest> findAllClients() {
+        List<ClientEntity> clientEntities = clientRepository.findByStExcluidoFalse();
+    
+        if (clientEntities.isEmpty()) {
             throw new TableEmptyException("No data registered");
         }
-        return clientEntity;
+    
+        ModelMapper modelMapper = new ModelMapper();
+
+        List<ClientRequest> clientRequests = clientEntities.stream()
+                .map(entity -> modelMapper.map(entity, ClientRequest.class))
+                .collect(Collectors.toList());
+    
+        return clientRequests;
     }
 
-    public ClientRequest findClientById(Long id){
-        Optional<ClientEntity> clientOptional = clientRepository.findById(id);
-        if(clientOptional.isEmpty()){
+    public ClientRequest findClientById(Long id) {
+
+        ClientEntity clientEntity = clientRepository.findByIdAndStExcluidoFalse(id);
+        
+        if (clientEntity == null) {
             throw new FieldNotFoundException("Client with ID " + id + " not found");
         }
+        
         ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(clientOptional.get(), ClientRequest.class);
+        return modelMapper.map(clientEntity, ClientRequest.class);
+
     }
+    
 
     public ClientRequest createClient(ClientRequest clientRequest) {
 
@@ -68,10 +87,35 @@ public class ClientService {
 
     public void deleteClientbyId(Long id) {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
-        if(clientOptional.isEmpty()){
+        
+        if (clientOptional.isEmpty()) {
             throw new FieldNotFoundException("Cliente com ID " + id + " não encontrado");
         }
-        clientRepository.deleteById(clientOptional.get().getId());
+
+        // Verifica se o cliente possui locações ativas
+        if (rentalRepository.existsByClientIdAndIsActiveTrue(id)) {
+            throw new FieldInvalidException("Não é possível remover o cliente com locação ativa.");
+        }
+
+        ClientEntity clientEntity = clientOptional.get();
+
+        // Pseudonimização dos dados
+        clientEntity.setName("*****");
+        clientEntity.setSurname("*****");
+        clientEntity.setCpf("XXX.XXX.XXX-XX");
+        clientEntity.setEmail("pseudonimizado@email.com");
+        clientEntity.setSexo(Sexo.X);
+        clientEntity.setDtNascimento(LocalDate.of(1900, 1, 1));
+        clientEntity.setCnh("XXXXXXXXXXX");
+        clientEntity.setCnhDtMaturity(LocalDate.of(1900, 1, 1));
+        clientEntity.setCep("XXXXX-XXX");
+        clientEntity.setAddress("Endereço Pseudonimizado");
+        clientEntity.setComplement("Complemento Pseudonimizado");
+
+        clientEntity.setStExcluido(true);
+
+        // Salva a entidade pseudonimizada
+        clientRepository.save(clientEntity);
     }
 
     public ClientRequest updateClientById(Long id, ClientRequest clientRequest) {

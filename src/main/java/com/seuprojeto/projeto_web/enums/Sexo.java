@@ -1,8 +1,9 @@
 package com.seuprojeto.projeto_web.enums;
 
 public enum Sexo {
-    MASCULINO("MASCULINO"),
-    FEMININO("FEMININO");
+    M("M"),
+    F("F"),
+    X("X");
 
     private String value;
 
