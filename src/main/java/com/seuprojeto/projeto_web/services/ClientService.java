@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 
 import java.time.LocalDate;
 
@@ -32,12 +34,20 @@ public class ClientService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public List<ClientEntity> findAllClients() {
-        List<ClientEntity> clientEntity = clientRepository.findAll();
-        if(clientEntity.isEmpty()){
-            throw new TableEmptyException("No data registered");
+    public List<ClientRequest> findAllClients() {
+        List<ClientEntity> clientEntities = clientRepository.findAll(); // Obter todos os clientes
+    
+        if (clientEntities.isEmpty()) {
+            throw new TableEmptyException("No data registered"); // Lançar exceção se a tabela estiver vazia
         }
-        return clientEntity;
+    
+        ModelMapper modelMapper = new ModelMapper();
+        // Mapeando a lista de ClientEntity para ClientRequest
+        List<ClientRequest> clientRequests = clientEntities.stream()
+                .map(entity -> modelMapper.map(entity, ClientRequest.class))
+                .collect(Collectors.toList());
+    
+        return clientRequests; // Retornar a lista de ClientRequest
     }
 
     public ClientRequest findClientById(Long id){
@@ -68,10 +78,30 @@ public class ClientService {
 
     public void deleteClientbyId(Long id) {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
-        if(clientOptional.isEmpty()){
+        
+        if (clientOptional.isEmpty()) {
             throw new FieldNotFoundException("Cliente com ID " + id + " não encontrado");
         }
-        clientRepository.deleteById(clientOptional.get().getId());
+
+        ClientEntity clientEntity = clientOptional.get();
+
+        // Pseudonimização dos dados
+        clientEntity.setName("*****");
+        clientEntity.setSurname("*****");
+        clientEntity.setCpf("XXX.XXX.XXX-XX");
+        clientEntity.setEmail("pseudonimizado@email.com");
+        clientEntity.setSexo(Sexo.X);
+        clientEntity.setDtNascimento(LocalDate.of(1900, 1, 1));
+        clientEntity.setCnh("XXXXXXXXXXX");
+        clientEntity.setCnhDtMaturity(LocalDate.of(1900, 1, 1));
+        clientEntity.setCep("XXXXX-XXX");
+        clientEntity.setAddress("Endereço Pseudonimizado");
+        clientEntity.setComplement("Complemento Pseudonimizado");
+
+        clientEntity.setStExcluido(true);
+
+        // Salva a entidade pseudonimizada
+        clientRepository.save(clientEntity);
     }
 
     public ClientRequest updateClientById(Long id, ClientRequest clientRequest) {

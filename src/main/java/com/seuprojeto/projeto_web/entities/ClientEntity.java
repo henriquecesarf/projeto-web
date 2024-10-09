@@ -76,6 +76,9 @@ public class ClientEntity {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private Boolean stExcluido = false;
+
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();

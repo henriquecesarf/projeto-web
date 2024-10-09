@@ -9,7 +9,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.seuprojeto.projeto_web.entities.ClientEntity;
 import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
 import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
@@ -32,8 +31,8 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping
-    public ResponseEntity<List<ClientEntity>> getAllClients() throws TableEmptyException {
-        List<ClientEntity> clients = clientService.findAllClients();
+    public ResponseEntity<List<ClientRequest>> getAllClients() throws TableEmptyException {
+        List<ClientRequest> clients = clientService.findAllClients();
         return ResponseEntity.ok(clients);
     }
 
