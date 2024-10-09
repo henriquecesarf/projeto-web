@@ -35,29 +35,34 @@ public class ClientService {
     private RestTemplate restTemplate;
 
     public List<ClientRequest> findAllClients() {
-        List<ClientEntity> clientEntities = clientRepository.findAll(); // Obter todos os clientes
+        List<ClientEntity> clientEntities = clientRepository.findByStExcluidoFalse();
     
         if (clientEntities.isEmpty()) {
-            throw new TableEmptyException("No data registered"); // Lançar exceção se a tabela estiver vazia
+            throw new TableEmptyException("No data registered");
         }
     
         ModelMapper modelMapper = new ModelMapper();
-        // Mapeando a lista de ClientEntity para ClientRequest
+
         List<ClientRequest> clientRequests = clientEntities.stream()
                 .map(entity -> modelMapper.map(entity, ClientRequest.class))
                 .collect(Collectors.toList());
     
-        return clientRequests; // Retornar a lista de ClientRequest
+        return clientRequests;
     }
 
-    public ClientRequest findClientById(Long id){
-        Optional<ClientEntity> clientOptional = clientRepository.findById(id);
-        if(clientOptional.isEmpty()){
+    public ClientRequest findClientById(Long id) {
+
+        ClientEntity clientEntity = clientRepository.findByIdAndStExcluidoFalse(id);
+        
+        if (clientEntity == null) {
             throw new FieldNotFoundException("Client with ID " + id + " not found");
         }
+        
         ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(clientOptional.get(), ClientRequest.class);
+        return modelMapper.map(clientEntity, ClientRequest.class);
+
     }
+    
 
     public ClientRequest createClient(ClientRequest clientRequest) {
 
