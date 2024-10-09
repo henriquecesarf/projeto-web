@@ -23,6 +23,7 @@ import com.seuprojeto.projeto_web.exceptions.FieldInvalidException;
 import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.repositories.ClientRepository;
+import com.seuprojeto.projeto_web.repositories.RentalRepository;
 import com.seuprojeto.projeto_web.requests.ClientRequest;
 @Service
 public class ClientService {
@@ -33,6 +34,9 @@ public class ClientService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private RentalRepository rentalRepository;
 
     public List<ClientRequest> findAllClients() {
         List<ClientEntity> clientEntities = clientRepository.findByStExcluidoFalse();
@@ -86,6 +90,11 @@ public class ClientService {
         
         if (clientOptional.isEmpty()) {
             throw new FieldNotFoundException("Cliente com ID " + id + " não encontrado");
+        }
+
+        // Verifica se o cliente possui locações ativas
+        if (rentalRepository.existsByClientIdAndIsActiveTrue(id)) {
+            throw new FieldInvalidException("Não é possível remover o cliente com locação ativa.");
         }
 
         ClientEntity clientEntity = clientOptional.get();
