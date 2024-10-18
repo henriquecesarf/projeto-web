@@ -1,0 +1,142 @@
+package com.seuprojeto.projeto_web.services;
+
+import com.seuprojeto.projeto_web.entities.Category;
+import com.seuprojeto.projeto_web.repositories.CategoryRepository;
+import com.seuprojeto.projeto_web.requests.CategoryRequest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class CategoryServiceTest {
+
+    @Mock
+    private CategoryRepository categoryRepository;
+
+    @InjectMocks
+    private CategoryService categoryService;
+
+    private ModelMapper modelMapper = new ModelMapper();
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void createCategory_Success() {
+        CategoryRequest categoryDTO = new CategoryRequest("Category1", 10.0, 20.0, 30.0);
+        Category category = modelMapper.map(categoryDTO, Category.class);
+
+        when(categoryRepository.existsByName(categoryDTO.getName())).thenReturn(false);
+        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+
+        CategoryRequest result = categoryService.createCategory(categoryDTO);
+
+        assertEquals(categoryDTO.getName(), result.getName());
+        verify(categoryRepository, times(1)).save(any(Category.class));
+    }
+
+    @Test
+    void createCategory_AlreadyExists() {
+        CategoryRequest categoryDTO = new CategoryRequest("Category1", 10.0, 20.0, 30.0);
+
+        when(categoryRepository.existsByName(categoryDTO.getName())).thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            categoryService.createCategory(categoryDTO);
+        });
+    }
+
+    @Test
+    void updateCategory_Success() {
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Category1");
+
+        CategoryRequest categoryDTO = new CategoryRequest("UpdatedCategory", 10.0, 20.0, 30.0);
+
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+
+        CategoryRequest updatedCategory = categoryService.updateCategory(1L, categoryDTO);
+
+        assertEquals("UpdatedCategory", updatedCategory.getName());
+        verify(categoryRepository, times(1)).save(any(Category.class));
+    }
+
+    @Test
+    void updateCategory_NotFound() {
+        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> {
+            categoryService.updateCategory(1L, new CategoryRequest());
+        });
+    }
+
+    @Test
+    void deleteCategory_Success() {
+        Category category = new Category();
+        category.setId(1L);
+
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        doNothing().when(categoryRepository).delete(category);
+
+        categoryService.deleteCategory(1L);
+
+        verify(categoryRepository, times(1)).delete(category);
+    }
+
+    @Test
+    void deleteCategory_NotFound() {
+        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> {
+            categoryService.deleteCategory(1L);
+        });
+    }
+
+    @Test
+    void listCategories_Success() {
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Category1");
+
+        when(categoryRepository.findAll()).thenReturn(List.of(category));
+
+        List<CategoryRequest> categories = categoryService.listCategories();
+
+        assertEquals(1, categories.size());
+        assertEquals("Category1", categories.get(0).getName());
+    }
+
+    @Test
+    void getCategory_Success() {
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Category1");
+
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+
+        CategoryRequest categoryRequest = categoryService.getCategory(1L);
+
+        assertEquals("Category1", categoryRequest.getName());
+    }
+
+    @Test
+    void getCategory_NotFound() {
+        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> {
+            categoryService.getCategory(1L);
+        });
+    }
+}
