@@ -6,18 +6,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-public class AuditEntity {
+@Table(name = "audit")
+public class AuditLogEntity {
 
-    public AuditEntity() {
+    public AuditLogEntity() {
     }
 
-    public AuditEntity(Long id, String username, String action, String entity, String details) {
+    public AuditLogEntity(Long id, String username, String action, String entity, String details) {
         this.id = id;
         this.username = username;
         this.action = action;
@@ -38,7 +40,7 @@ public class AuditEntity {
     @Column(nullable = false)
     private String entity;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1024)
     private String details;
 
     @Column(nullable = false)
