@@ -25,6 +25,8 @@ public class SecurityConfig {
         return httpSecurity.csrf(csrf -> csrf.disable())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests(requests -> requests
                 .requestMatchers("api/users/**").permitAll()
+                // .requestMatchers("api/sinister/**", "api/sinister/**","api/client/**", "api/rental/**", "categories/**").permitAll()
+                .requestMatchers("api/sinister/**", "api/client/**", "api/rental/**", "api/categories/**").hasRole("USER")
                 .anyRequest().denyAll()).
                 addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

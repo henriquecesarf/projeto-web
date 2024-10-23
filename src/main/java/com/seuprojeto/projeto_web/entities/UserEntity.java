@@ -1,4 +1,4 @@
-package com.seuprojeto.projeto_web.security.jwt;
+package com.seuprojeto.projeto_web.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,18 +15,21 @@ import java.util.List;
 @Data
 @Table(name = "modeluser")
 @Entity
-public class ModelUser implements Serializable {
+public class UserEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name="users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name="role_id"))
-    private List<ModelRole> roles;
+    private List<RoleEntity> roles;
   
 }

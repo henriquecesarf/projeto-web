@@ -1,14 +1,14 @@
-package com.seuprojeto.projeto_web.security.user;
+package com.seuprojeto.projeto_web.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.seuprojeto.projeto_web.security.jwt.CreateUserDTO;
+import com.seuprojeto.projeto_web.security.CreateUserDTO;
+import com.seuprojeto.projeto_web.security.LoginUserDTO;
 import com.seuprojeto.projeto_web.security.jwt.JwtTokenDTO;
-import com.seuprojeto.projeto_web.security.jwt.LoginUserDTO;
-import com.seuprojeto.projeto_web.security.jwt.UserService;
+import com.seuprojeto.projeto_web.services.UserService;
 
 @RestController
 @RequestMapping("/api/users")
@@ -18,14 +18,14 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtTokenDTO> loginUsuario(@RequestBody LoginUserDTO loginUserDto) {
-        JwtTokenDTO token = userService.autenticarUsuario(loginUserDto);
+    public ResponseEntity<JwtTokenDTO> loginUser(@RequestBody LoginUserDTO loginUserDto) {
+        JwtTokenDTO token = userService.authenticateUser(loginUserDto);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Void> salvarUsuario(@RequestBody CreateUserDTO createUserDto) {
-        userService.salvarUsuario(createUserDto);
+    public ResponseEntity<Void> postUser(@RequestBody CreateUserDTO createUserDto) {
+        userService.saveUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

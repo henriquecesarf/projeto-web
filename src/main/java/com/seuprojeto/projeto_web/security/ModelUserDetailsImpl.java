@@ -1,9 +1,11 @@
-package com.seuprojeto.projeto_web.security.jwt;
+package com.seuprojeto.projeto_web.security;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.seuprojeto.projeto_web.entities.UserEntity;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -11,9 +13,9 @@ import java.util.stream.Collectors;
 @Getter
 public class ModelUserDetailsImpl implements UserDetails {
 
-    private ModelUser modelUser;
+    private UserEntity modelUser;
 
-    public ModelUserDetailsImpl(ModelUser modelUser) {
+    public ModelUserDetailsImpl(UserEntity modelUser) {
         this.modelUser = modelUser;
     }
 

@@ -1,4 +1,4 @@
-package com.seuprojeto.projeto_web.security;
+package com.seuprojeto.projeto_web.security.jwt;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -11,7 +11,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.seuprojeto.projeto_web.security.jwt.ModelUserDetailsImpl;
+import com.seuprojeto.projeto_web.security.ModelUserDetailsImpl;
 
 @Service
 public class JwtTokenService {

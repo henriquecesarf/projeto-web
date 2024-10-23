@@ -1,4 +1,4 @@
-package com.seuprojeto.projeto_web.security.jwt;
+package com.seuprojeto.projeto_web.security;
 
 import com.seuprojeto.projeto_web.enums.Role;
 
