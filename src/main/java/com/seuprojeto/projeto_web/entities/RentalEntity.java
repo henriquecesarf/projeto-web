@@ -2,13 +2,7 @@ package com.seuprojeto.projeto_web.entities;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -24,13 +18,13 @@ public class RentalEntity {
     private Long clientId; // Entidade Cliente
 
     @Column(nullable = false)
-    private Long vehicleId; // Entidade Veículo
-
-    @Column(nullable = false)
     private String optionals;
 
     @Column(nullable = false)
-    private LocalDateTime rentalDateTime; // Data e hora da locação
+    private LocalDateTime rentalDateTimeStart; // Data e hora da locação inicio
+
+    @Column(nullable = false)
+    private LocalDateTime rentalDateTimeEnd; // Data e hora da locaçãofim
 
     @Column(nullable = false)
     private double dailyRate; // Valor da diária
@@ -66,5 +60,9 @@ public class RentalEntity {
     public void prePersist() {
         registrationDate = LocalDateTime.now();
     }
+
+    @ManyToOne
+    @JoinColumn(name = "vehicleId", nullable = false)
+    private VehicleEntity vehicle;
 
 }
