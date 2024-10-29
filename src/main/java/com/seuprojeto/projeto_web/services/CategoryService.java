@@ -1,7 +1,7 @@
 package com.seuprojeto.projeto_web.services;
 
 
-import com.seuprojeto.projeto_web.entities.Category;
+import com.seuprojeto.projeto_web.entities.CategoryEntity;
 import com.seuprojeto.projeto_web.repositories.CategoryRepository;
 import com.seuprojeto.projeto_web.requests.CategoryRequest;
 import org.modelmapper.ModelMapper;
@@ -20,37 +20,37 @@ public class CategoryService {
 
     public CategoryRequest createCategory(CategoryRequest categoryDTO) {
         if (categoryRepository.existsByName(categoryDTO.getName())) {
-            throw new IllegalArgumentException("A category with this name already exists.");
+            throw new IllegalArgumentException("A categoryEntity with this name already exists.");
         }
-        Category category = modelMapper.map(categoryDTO, Category.class);
-        categoryRepository.save(category);
-        return modelMapper.map(category, CategoryRequest.class);
+        CategoryEntity categoryEntity = modelMapper.map(categoryDTO, CategoryEntity.class);
+        categoryRepository.save(categoryEntity);
+        return modelMapper.map(categoryEntity, CategoryRequest.class);
     }
 
     public CategoryRequest updateCategory(Long id, CategoryRequest categoryDTO) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
+        CategoryEntity categoryEntity = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("CategoryEntity not found."));
 
-        modelMapper.map(categoryDTO, category);
-        categoryRepository.save(category);
-        return modelMapper.map(category, CategoryRequest.class);
+        modelMapper.map(categoryDTO, categoryEntity);
+        categoryRepository.save(categoryEntity);
+        return modelMapper.map(categoryEntity, CategoryRequest.class);
     }
 
     public void deleteCategory(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
-        categoryRepository.delete(category);
+        CategoryEntity categoryEntity = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("CategoryEntity not found."));
+        categoryRepository.delete(categoryEntity);
     }
 
     public List<CategoryRequest> listCategories() {
         return categoryRepository.findAll().stream()
-                .map(category -> modelMapper.map(category, CategoryRequest.class))
+                .map(categoryEntity -> modelMapper.map(categoryEntity, CategoryRequest.class))
                 .toList();
     }
 
     public CategoryRequest getCategory(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
-        return modelMapper.map(category, CategoryRequest.class);
+        CategoryEntity categoryEntity = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("CategoryEntity not found."));
+        return modelMapper.map(categoryEntity, CategoryRequest.class);
     }
 }
