@@ -9,37 +9,35 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.HashMap;
 import java.util.Map;
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({ FieldNotFoundException.class, TableEmptyException.class, DuplicateRegisterException.class, FieldInvalidException.class })
-    public ResponseEntity<Map<String, String>> handleAllExceptions(Exception exception) {
+    // Tratamento para várias exceções personalizadas
+    @ExceptionHandler({ FieldNotFoundException.class, DuplicateRegisterException.class, FieldInvalidException.class })
+    public ResponseEntity<Map<String, String>> handleCustomExceptions(Exception exception) {
         Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", exception.getMessage());
 
         if (exception instanceof FieldNotFoundException) {
-            errorResponse.put("message", exception.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
 
-        if(exception instanceof TableEmptyException){
-            errorResponse.put("message", exception.getMessage());
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(errorResponse);
-        }
-
-        if(exception instanceof DuplicateRegisterException){
-            errorResponse.put("message", exception.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
-
-        if(exception instanceof FieldInvalidException){
-            errorResponse.put("message", exception.getMessage());
+        if (exception instanceof DuplicateRegisterException || exception instanceof FieldInvalidException) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
+    // Tratamento específico para TableEmptyException
+    @ExceptionHandler(TableEmptyException.class)
+    public ResponseEntity<Map<String, String>> handleTableEmptyException(TableEmptyException exception) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(errorResponse); // Retorna 204 se a tabela estiver vazia
+    }
+
+    // Tratamento para exceções de validação
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errorResponse = new HashMap<>();
@@ -54,5 +52,4 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
-
 }

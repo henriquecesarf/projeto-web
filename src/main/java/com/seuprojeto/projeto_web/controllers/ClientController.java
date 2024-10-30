@@ -33,7 +33,10 @@ public class ClientController {
     @GetMapping
     public ResponseEntity<List<ClientRequest>> getAllClients() throws TableEmptyException {
         List<ClientRequest> clients = clientService.findAllClients();
-        return ResponseEntity.ok(clients);
+        if (clients.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Retorna 204 se a lista estiver vazia
+        }
+        return ResponseEntity.ok(clients); // Retorna 200 com a lista se não estiver vazia
     }
 
     @GetMapping("/{id}")
@@ -47,7 +50,7 @@ public class ClientController {
         ClientRequest newClient = clientService.createClient(clientRequest);
         return ResponseEntity.ok(newClient);
     }
-    
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
         clientService.deleteClientbyId(id);

@@ -85,5 +85,4 @@ public class ClientRequest {
         this.state = state;
         this.complement = complement;
     }
-
 }
