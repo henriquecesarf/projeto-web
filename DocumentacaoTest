@@ -1,0 +1,70 @@
+Testes Unitários do CategoryController
+
+Testes de Sucesso
+createCategory_Success
+•	Descrição: Valida que o controlador cria uma nova categoria com sucesso ao receber dados válidos.
+•	Motivação: Garante que o endpoint /categories responde corretamente ao criar uma categoria.
+•	Status Esperado: 200 OK
+updateCategory_Success
+•	Descrição: Verifica se o controlador atualiza uma categoria existente com sucesso.
+•	Motivação: Confirma que o endpoint /categories/{id} consegue atualizar uma categoria com dados válidos.
+•	Status Esperado: 200 OK
+deleteCategory_Success
+•	Descrição: Testa se o controlador remove uma categoria corretamente.
+•	Motivação: Garante que o endpoint /categories/{id} exclui uma categoria existente.
+•	Status Esperado: 204 No Content
+listCategories_Success
+•	Descrição: Verifica se o controlador retorna uma lista de categorias.
+•	Motivação: Confirma que o endpoint /categories responde corretamente com uma lista de categorias.
+•	Status Esperado: 200 OK
+getCategory_Success
+•	Descrição: Testa se o controlador retorna uma categoria específica ao receber um ID válido.
+•	Motivação: Assegura que o endpoint /categories/{id} responde corretamente com a categoria correspondente.
+•	Status Esperado: 200 OK
+________________________________________
+
+
+
+Testes de Falha
+createCategory_InvalidData_ReturnsBadRequest
+•	Descrição: Verifica que o controlador retorna 400 Bad Request ao receber dados inválidos (ex.: nome vazio).
+•	Motivação: Garante que o sistema rejeita e responde apropriadamente a entradas inválidas.
+•	Status Esperado: 400 Bad Request
+updateCategory_CategoryNotFound_ReturnsNotFound
+•	Descrição: Simula a tentativa de atualizar uma categoria inexistente, verificando se o sistema retorna 404 Not Found.
+•	Motivação: Certifica-se de que o sistema responde corretamente quando uma categoria não é encontrada.
+•	Status Esperado: 404 Not Found
+deleteCategory_CategoryNotFound_ReturnsNotFound
+•	Descrição: Verifica se o controlador retorna 404 Not Found ao tentar excluir uma categoria inexistente.
+•	Motivação: Garante que o sistema lida adequadamente com a exclusão de categorias que não existem.
+•	Status Esperado: 404 Not Found
+listCategories_EmptyList_ReturnsOk
+•	Descrição: Testa o retorno de uma lista vazia de categorias.
+•	Motivação: Garante que o sistema responde com 200 OK e um array vazio quando não há categorias.
+•	Status Esperado: 200 OK
+getCategory_CategoryNotFound_ReturnsNotFound
+•	Descrição: Simula uma tentativa de buscar uma categoria inexistente e verifica o retorno de 404 Not Found.
+•	Motivação: Assegura que o sistema responde corretamente para uma busca de categoria não encontrada.
+•	Status Esperado: 404 Not Found
+
+
+
+
+________________________________________________
+
+
+Testes Unitários do ClientController
+Testes de Sucesso
+getAllClients_Success
+•	Descrição: Valida que o controlador retorna uma lista de clientes com sucesso ao haver clientes cadastrados.
+•	Motivação: Garante que o endpoint /api/client responde corretamente com uma lista de clientes.
+•	Status Esperado: 200 OK
+getAllClients_EmptyTable_ReturnsEmptyList
+•	Descrição: Verifica se o controlador retorna uma lista vazia ao não haver clientes cadastrados.
+•	Motivação: Confirma que o endpoint /api/client responde com 204 No Content quando não há clientes.
+•	Status Esperado: 204 No Content
+getById_Success
+•	Descrição: Testa se o controlador retorna uma categoria específica ao receber um ID válido.
+•	Motivação: Assegura que o endpoint /api/client/{id} responde corretamente com a categoria correspondente.
+•	Status Esperado: 200 OK
+
