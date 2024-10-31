@@ -28,7 +28,7 @@ public class JwtTokenService {
             return JWT.create()
                     .withIssuer(issuer)
                     .withIssuedAt(dataCriacao())
-                    .withExpiresAt(dataExpiracao())
+                    .withExpiresAt(dateExp())
                     .withSubject(user.getUsername())
                     .sign(algorithm);
         } catch (JWTCreationException exception){
@@ -36,7 +36,7 @@ public class JwtTokenService {
         }
     }
 
-    public String pegarToken(String token) {
+    public String getToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret_Key);
             return JWT.require(algorithm)
@@ -49,7 +49,7 @@ public class JwtTokenService {
         }
     }
 
-    private Instant dataExpiracao() {
+    private Instant dateExp() {
         return ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
                 .plusHours(2).toInstant();
     }

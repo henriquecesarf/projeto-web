@@ -1,84 +1,82 @@
 package com.seuprojeto.projeto_web.services;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Service;
 
 import com.seuprojeto.projeto_web.entities.AuditLogEntity;
 import com.seuprojeto.projeto_web.repositories.AuditLogRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class AuditLogService {
     
     @Autowired
     private AuditLogRepository auditLogRepository;
+    @Autowired
+    HttpSession session;
 
     public void log(String entidade, String detalhes) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (authentication != null && authentication.isAuthenticated()) ? authentication.getName() : "anônimo";
-
         AuditLogEntity auditLog = new AuditLogEntity();
-        auditLog.setAction("Consulta de dados");
+        auditLog.setAction("INFO");
         auditLog.setEntity(entidade);
         auditLog.setDetails(detalhes);
-        auditLog.setUsername(username);
+        auditLog.setCurrentValues("");
+        auditLog.setPreviousValues("");
 
+        String username = Optional.ofNullable((String) session.getAttribute("username"))
+        .orElse("anonimo");
+        auditLog.setUsername(username);      
+
+        auditLog.setUserId(String.valueOf(session.getAttribute("userId")));
+        
         auditLogRepository.save(auditLog); 
     }
 
-    public void logAdd(String entidade, String detalhes) {
+    public void logAdd(String entidade, String currentValues) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (authentication != null && authentication.isAuthenticated()) ? authentication.getName() : "anônimo";
 
         AuditLogEntity auditLog = new AuditLogEntity();
-        auditLog.setAction("Salvar dados");
+        auditLog.setAction("Persistencia de dados");
         auditLog.setEntity(entidade);
-        auditLog.setDetails(detalhes);
-        auditLog.setUsername(username);
-
-        auditLogRepository.save(auditLog); 
-    }
-
-    public void logLogin() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (authentication != null && authentication.isAuthenticated()) ? authentication.getName() : "anônimo";
-
-        AuditLogEntity auditLog = new AuditLogEntity();
-        auditLog.setAction("Logar");
-        auditLog.setEntity("User");
         auditLog.setDetails("");
-        auditLog.setUsername(username);
+        auditLog.setCurrentValues(currentValues);
+        auditLog.setPreviousValues("");
+        String username = Optional.ofNullable((String) session.getAttribute("username"))
+        .orElse("anonimo");
+        auditLog.setUsername(username);    
+        auditLog.setUserId(String.valueOf(session.getAttribute("userId")));
 
         auditLogRepository.save(auditLog); 
     }
-    public void logDelete(String entidade, String detalhes) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (authentication != null && authentication.isAuthenticated()) ? authentication.getName() : "anônimo";
+    public void logDelete(String entidade, String previousValues) {
 
         AuditLogEntity auditLog = new AuditLogEntity();
         auditLog.setAction("exclusão de dados");
         auditLog.setEntity(entidade);
-        auditLog.setDetails("Dado Excluido: " + detalhes);
-        auditLog.setUsername(username);
+        auditLog.setDetails("");
+        auditLog.setCurrentValues("");
+        auditLog.setPreviousValues(previousValues);
+        auditLog.setUsername((String) session.getAttribute("username"));
+        auditLog.setUserId(String.valueOf(session.getAttribute("userId")));
 
         auditLogRepository.save(auditLog); 
     }
 
-    public void logUpdate(String entidade, String detalhes) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (authentication != null && authentication.isAuthenticated()) ? authentication.getName() : "anônimo";
+    public void logUpdate(String entidade, String currentValues, String previousValues) {
 
         AuditLogEntity auditLog = new AuditLogEntity();
         auditLog.setAction("Atualização dados");
         auditLog.setEntity(entidade);
-        auditLog.setDetails(detalhes);
-        auditLog.setUsername(username);
+        auditLog.setDetails("");
+        auditLog.setCurrentValues(currentValues);
+        auditLog.setPreviousValues(previousValues);
+        auditLog.setUsername((String) session.getAttribute("username"));
+        auditLog.setUserId(String.valueOf(session.getAttribute("userId")));
 
         auditLogRepository.save(auditLog); 
     }

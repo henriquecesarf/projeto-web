@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,8 +18,6 @@ import com.seuprojeto.projeto_web.repositories.UserRepository;
 import com.seuprojeto.projeto_web.security.jwt.JwtTokenService;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class UserAuthenticationFilter extends OncePerRequestFilter{
@@ -26,56 +26,57 @@ public class UserAuthenticationFilter extends OncePerRequestFilter{
     private JwtTokenService jwtTokenService;
 
     @Autowired
+    HttpSession session;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (verificaEndpointsPublicos(request)) {
-            String token = recuperaToken(request);
-            if (token != null) {
-                String subject = jwtTokenService.pegarToken(token);
-                UserEntity modelUser = userRepository.findByUsername(subject).get();
-                ModelUserDetailsImpl modelUserDetails = new ModelUserDetailsImpl(modelUser);
-                Authentication authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                modelUserDetails.getUsername(),
-                                null,
-                                modelUserDetails.getAuthorities());
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
+            throws ServletException, IOException {
+        // Recupera o token da requisição
+        String token = recoveryToken(request);
+        
+        if (token != null) {
+            try {
+                String usernameAuthenticated = (String) session.getAttribute("username");
+                
+                // Obtém o nome de usuário a partir do token
+                String usernameToken = jwtTokenService.getToken(token);
+                
+                if (!usernameAuthenticated.equals(usernameToken)) {
+                    // Se o token não pertence ao usuário autenticado, rejeita a requisição
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Token não pertence ao usuário autenticado!");
+                    return;
+                }else{
+                    String subject = jwtTokenService.getToken(token);
+                    UserEntity modelUser = userRepository.findByUsername(subject).get();
+                    ModelUserDetailsImpl modelUserDetails = new ModelUserDetailsImpl(modelUser);
+                    Authentication authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    modelUserDetails.getUsername(),
+                                    null,
+                                    modelUserDetails.getAuthorities());
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                throw new RuntimeException("Token inexistente!");
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Token invalido ou expirado!");
+                return;
             }
         }
+
+        // Passa a requisição para o próximo filtro na cadeia
         filterChain.doFilter(request, response);
     }
 
-    private boolean verificaEndpointsPublicos(HttpServletRequest request) {
-    String requestURI = request.getRequestURI();
-    
-    // Lista de endpoints públicos
-    List<String> endpointsPublicos = Arrays.asList(
-            "/api/users/login", 
-            "/api/users"
-    );
-
-    // Verifica se a URI corresponde a algum dos endpoints públicos
-    for (String endpoint : endpointsPublicos) {
-        if (requestURI.startsWith(endpoint)) {
-            return false; // O endpoint é público, então não precisa de autenticação
-        }
-    }
-    
-    // Se a URI não corresponder a nenhum dos públicos, retorna true, indicando que é privado
-    return true; 
-}
-
-    private String recuperaToken(HttpServletRequest request) {
+    private String recoveryToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.replace("Bearer ", "");
         }
         return null;
     }
-
 }

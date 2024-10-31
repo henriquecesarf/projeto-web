@@ -13,7 +13,6 @@ import com.seuprojeto.projeto_web.entities.SinisterEntity;
 import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.requests.SinisterRequest;
-import com.seuprojeto.projeto_web.services.AuditLogService;
 import com.seuprojeto.projeto_web.services.SinisterService;
 
 @RestController
@@ -23,19 +22,16 @@ public class SinisterController {
     @Autowired
     private SinisterService sinisterService;
     @Autowired
-    private AuditLogService auditLogService;
 
     @GetMapping
     public ResponseEntity<List<SinisterEntity>> getAllSinister() throws TableEmptyException {
         List<SinisterEntity> sinisters = sinisterService.findAllSinisters();
-        auditLogService.log("Sinister", "Requisitou dados de Sinistro");
         return ResponseEntity.ok(sinisters);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SinisterRequest> getById(@PathVariable Long id) throws FieldNotFoundException {
         SinisterRequest sinister = sinisterService.findSinisterById(id);
-        auditLogService.log("Sinister", "Requisitou dados de Sinistro com id: " + id);
         return ResponseEntity.ok(sinister);
     }
 

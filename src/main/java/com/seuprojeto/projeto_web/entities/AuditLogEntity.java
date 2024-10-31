@@ -35,13 +35,22 @@ public class AuditLogEntity {
     private String username;
 
     @Column(nullable = false)
+    private String userId;
+
+    @Column(nullable = false)
     private String action;
 
     @Column(nullable = false)
     private String entity;
 
-    @Column(nullable = false, length = 1024)
+    @Column(nullable = true, length = 1024)
     private String details;
+
+    @Column(nullable = false, length = 1024)
+    private String currentValues;
+
+    @Column(nullable = false, length = 1024)
+    private String previousValues;
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
