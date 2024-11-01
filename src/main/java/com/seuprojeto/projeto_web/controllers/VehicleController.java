@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-// import java.time.LocalDate;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -45,9 +45,8 @@ public class VehicleController {
     }
 
     @GetMapping("/disponiveis")
-    public ResponseEntity<List<VehicleEntity>> veiculosDisponiveis() {
-        // return ResponseEntity.ok(veiculoService.vehiclesAvailableForRent(inicio, fim));
-        return ResponseEntity.ok(veiculoService.vehiclesAvailableForRent());
+    public ResponseEntity<List<VehicleEntity>> veiculosDisponiveis(@RequestParam LocalDate inicio, @RequestParam LocalDate fim) {
+        return ResponseEntity.ok(veiculoService.vehiclesAvailableForRent(inicio, fim));
     }
 
 }
