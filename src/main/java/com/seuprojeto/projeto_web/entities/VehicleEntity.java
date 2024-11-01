@@ -3,7 +3,6 @@ package com.seuprojeto.projeto_web.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,28 +14,48 @@ public class VehicleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
-    private String fabricante;
-    private String versao;
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String manufacturer; //fabricante
+
+    @Column(nullable = false)
+    private String version; //versão
+
+    @Column(nullable = false)
     private String urlFipe;
 
     @Column(unique = true)
-    private String placa;
-
-    private String cor;
-    private String cambio;
-    private Double quilometragem;
-    private Integer capacidadePassageiros;
-    private Integer volumeCarga;
-    private Boolean disponivel;
-
-    @ElementCollection
-    private List<String> acessorios;
-
-    private Double valorDiaria;
+    private String plate; //placa
 
     @Column(nullable = false)
-    private LocalDateTime registrationDate; // Data de cadastro
+    private String color; //color
+
+    @Column(nullable = false)
+    private String exchange; //cambio
+
+    @Column(nullable = false)
+    private Double km; //kilometragem
+
+    @Column(nullable = false)
+    private Integer capacityPassengers;//capacidade de passageiros
+
+    @Column(nullable = false)
+    private Integer volumeLoad; //volume de carga
+
+    @Column(nullable = false)
+    private Boolean available = true; //disponivel
+
+    @Column(nullable = false)
+    @ElementCollection
+    private List<String> accessories; //acessorios
+
+    @Column(nullable = false)
+    private Double valuedaily; //valor diaria
+
+    @Column(nullable = false)
+    private LocalDateTime registrationDate; // Data de registro
 
     @PrePersist
     public void prePersist() {
@@ -45,8 +64,8 @@ public class VehicleEntity {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private CategoryEntity categoria;
+    private CategoryEntity category; //categoria
 
     @OneToMany(mappedBy = "vehicle")
-    private List<RentalEntity> rentals;
+    private List<RentalEntity> rentals; //alugueis
 }

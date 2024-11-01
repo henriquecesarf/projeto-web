@@ -2,78 +2,77 @@ package com.seuprojeto.projeto_web.requests;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 public class VehicleRequest {
 
     @NotBlank(message = "O nome do veículo é obrigatório.")
-    private String nome;
+    private String name;
 
     @NotBlank(message = "O fabricante é obrigatório.")
-    private String fabricante;
+    private String manufacturer;
 
     @NotBlank(message = "A versão é obrigatória.")
-    private String versao;
+    private String version;
 
     @NotBlank(message = "A URL FIPE é obrigatória.")
     private String urlFipe;
 
     @NotBlank(message = "A placa é obrigatória.")
-    private String placa;
+    @Size(min = 7, max = 7, message = "A placa deve ter exatamente 7 caracteres.")
+    private String plate;
 
     @NotBlank(message = "A cor é obrigatória.")
-    private String cor;
+    private String color;
 
     @NotBlank(message = "O tipo de câmbio é obrigatório.")
-    private String cambio;
+    private String exchange;
 
     @NotNull(message = "A quilometragem é obrigatória.")
     @PositiveOrZero(message = "A quilometragem deve ser um valor positivo ou zero.")
-    private Double quilometragem;
+    private Double km;
 
     @NotNull(message = "A capacidade de passageiros é obrigatória.")
     @Min(value = 1, message = "A capacidade de passageiros deve ser no mínimo 1.")
-    private Integer capacidadePassageiros;
+    private Integer capacityPassengers;
 
     @NotNull(message = "O volume de carga é obrigatório.")
     @PositiveOrZero(message = "O volume de carga deve ser um valor positivo ou zero.")
-    private Integer volumeCarga;
+    private Integer volumeLoad;
 
     @NotNull(message = "A disponibilidade do veículo é obrigatória.")
-    private Boolean disponivel;
+    private Boolean available = true;
 
     @NotEmpty(message = "Os acessórios são obrigatórios.")
-    private List<String> acessorios;
+    private List<String> accessories;
 
     @NotNull(message = "O valor da diária é obrigatório.")
     @Positive(message = "O valor da diária deve ser um valor positivo.")
-    private Double valorDiaria;
+    private Double valuedaily;
 
     @NotNull(message = "A categoria do veículo é obrigatória.")
-    private Long categoriaId;
+    private Long categoryId;
 
     public VehicleRequest() {
     }
 
-    public VehicleRequest(String nome, String fabricante, String versao, String urlFipe, String placa, String cor, String cambio, Double quilometragem, Integer capacidadePassageiros, Integer volumeCarga, Boolean disponivel, List<String> acessorios, Double valorDiaria, Long categoriaId) {
-        this.nome = nome;
-        this.fabricante = fabricante;
-        this.versao = versao;
+    public VehicleRequest(String name, String manufacturer, String version, String urlFipe, String plate, String color, String exchange, Double km, Integer capacityPassengers, Integer volumeLoad, Boolean available, List<String> accessories, Double valuedaily, Long categoryId) {
+        this.name = name;
+        this.manufacturer = manufacturer;
+        this.version = version;
         this.urlFipe = urlFipe;
-        this.placa = placa;
-        this.cor = cor;
-        this.cambio = cambio;
-        this.quilometragem = quilometragem;
-        this.capacidadePassageiros = capacidadePassageiros;
-        this.volumeCarga = volumeCarga;
-        this.disponivel = disponivel;
-        this.acessorios = acessorios;
-        this.valorDiaria = valorDiaria;
-        this.categoriaId = categoriaId;
+        this.plate = plate;
+        this.color = color;
+        this.exchange = exchange;
+        this.km = km;
+        this.capacityPassengers = capacityPassengers;
+        this.volumeLoad = volumeLoad;
+        this.available = available;
+        this.accessories = accessories;
+        this.valuedaily = valuedaily;
+        this.categoryId = categoryId;
     }
+
 }

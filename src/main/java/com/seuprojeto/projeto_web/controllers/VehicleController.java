@@ -2,13 +2,18 @@ package com.seuprojeto.projeto_web.controllers;
 
 
 import com.seuprojeto.projeto_web.entities.VehicleEntity;
+import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
+import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.requests.VehicleRequest;
 import com.seuprojeto.projeto_web.services.VehicleService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+// import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -19,18 +24,18 @@ public class VehicleController {
     private VehicleService veiculoService;
 
     @PostMapping
-    public ResponseEntity<VehicleRequest> cadastrarVeiculo(@RequestBody VehicleRequest veiculo) {
+    public ResponseEntity<VehicleEntity> postVehicle(@Valid @RequestBody VehicleRequest veiculo) throws EntityNotFoundException, DuplicateRegisterException {
         return ResponseEntity.ok(veiculoService.registerVehicle(veiculo));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VehicleEntity> editarVeiculo(@PathVariable Long id, @RequestBody VehicleEntity veiculoAtualizado) {
+    public ResponseEntity<VehicleEntity> editVehicle(@PathVariable Long id, @RequestBody VehicleEntity veiculoAtualizado) {
         return ResponseEntity.ok(veiculoService.editVehicle(id, veiculoAtualizado));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluirVeiculo(@PathVariable Long id) {
-        veiculoService.deleteVehicle(id);
+    public ResponseEntity<Void> deleteVehicle(@PathVariable Long id) {
+        veiculoService.deleteVehicleById(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -40,8 +45,9 @@ public class VehicleController {
     }
 
     @GetMapping("/disponiveis")
-    public ResponseEntity<List<VehicleEntity>> veiculosDisponiveis(@RequestParam LocalDate inicio, @RequestParam LocalDate fim) {
-        return ResponseEntity.ok(veiculoService.vehiclesAvailableForRent(inicio, fim));
+    public ResponseEntity<List<VehicleEntity>> veiculosDisponiveis() {
+        // return ResponseEntity.ok(veiculoService.vehiclesAvailableForRent(inicio, fim));
+        return ResponseEntity.ok(veiculoService.vehiclesAvailableForRent());
     }
 
 }

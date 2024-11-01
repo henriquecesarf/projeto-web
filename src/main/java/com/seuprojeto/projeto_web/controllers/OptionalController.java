@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seuprojeto.projeto_web.entities.OptionalEntity;
-import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
+import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.requests.OptionalRequest;
 import com.seuprojeto.projeto_web.services.OptionalService;
@@ -30,7 +30,7 @@ public class OptionalController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OptionalRequest> getById(@PathVariable Long id) throws FieldNotFoundException {
+    public ResponseEntity<OptionalRequest> getById(@PathVariable Long id) throws EntityNotFoundException {
         OptionalRequest optional = optionalService.findOptionalById(id);
         return ResponseEntity.ok(optional);
     }

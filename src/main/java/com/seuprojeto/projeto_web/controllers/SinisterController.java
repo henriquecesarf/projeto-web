@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seuprojeto.projeto_web.entities.SinisterEntity;
-import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
+import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.requests.SinisterRequest;
 import com.seuprojeto.projeto_web.services.SinisterService;
@@ -29,7 +29,7 @@ public class SinisterController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SinisterRequest> getById(@PathVariable Long id) throws FieldNotFoundException {
+    public ResponseEntity<SinisterRequest> getById(@PathVariable Long id) throws EntityNotFoundException {
         SinisterRequest sinister = sinisterService.findSinisterById(id);
         return ResponseEntity.ok(sinister);
     }

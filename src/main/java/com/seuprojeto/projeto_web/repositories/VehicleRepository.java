@@ -8,8 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
-    Optional<VehicleEntity> findByPlaca(String placa);
+    Optional<VehicleEntity> findByPlate(String plate);
 
     @Query("SELECT v FROM VehicleEntity v WHERE NOT EXISTS (SELECT r FROM RentalEntity r WHERE r.vehicle.id = v.id AND r.rentalDateTimeEnd IS NULL)")
     List<VehicleEntity> findAvailableVehiclesForRent();
+
+    List<VehicleEntity> findByAvailableTrue();
+
 }
