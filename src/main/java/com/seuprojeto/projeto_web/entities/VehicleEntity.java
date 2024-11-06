@@ -48,7 +48,6 @@ public class VehicleEntity {
     private Boolean available = true; //disponivel
 
     @Column(nullable = false)
-    @ElementCollection
     private List<String> accessories; //acessorios
 
     @Column(nullable = false)

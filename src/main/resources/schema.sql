@@ -17,3 +17,12 @@ CREATE TABLE IF NOT EXISTS optional (
     value_declared DECIMAL(10, 2) NOT NULL,
     qtd_available INT NOT NULL
 );
+
+CREATE TABLE category (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    fine1To4Days DOUBLE NOT NULL,
+    fine5To9Days DOUBLE NOT NULL,
+    fine10DaysOrMore DOUBLE NOT NULL,
+    createdAt TIMESTAMP NOT NULL
+);

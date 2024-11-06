@@ -2,7 +2,9 @@ package com.seuprojeto.projeto_web.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seuprojeto.projeto_web.enums.CnhCategory;
 import com.seuprojeto.projeto_web.enums.Sexo;
 
@@ -13,6 +15,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -83,5 +86,9 @@ public class ClientEntity {
     public void prePersist() {
         createdAt = LocalDateTime.now();
     }
+
+    @OneToMany(mappedBy = "client")
+    @JsonIgnore
+    private List<RentalEntity> rentals;
 
 }
