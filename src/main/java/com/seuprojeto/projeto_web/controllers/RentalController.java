@@ -42,8 +42,7 @@ public class RentalController {
     }
 
     @PostMapping
-    @Valid
-    public ResponseEntity<RentalRequest> postRental(@RequestBody RentalRequest rentalRequest) throws EntityNotFoundException {
+    public ResponseEntity<RentalRequest> postRental(@Valid @RequestBody RentalRequest rentalRequest) throws EntityNotFoundException {
         RentalRequest rental = rentalService.createRental(rentalRequest) ;
         return ResponseEntity.status(HttpStatus.CREATED).body(rental);
     }
@@ -55,15 +54,13 @@ public class RentalController {
     }
 
     @PutMapping("/{id}")
-    @Valid
-    public ResponseEntity<RentalRequest> putRental(@PathVariable Long id, @RequestBody RentalRequest rentalRequest) {
+    public ResponseEntity<RentalRequest> putRental(@PathVariable Long id,@Valid  @RequestBody RentalRequest rentalRequest) {
         RentalRequest updatedRental = rentalService.updateRentalById(id, rentalRequest);
         return ResponseEntity.ok(updatedRental);
     }
 
     @PatchMapping("/{id}")
-    @Valid
-    public ResponseEntity<RentalRequest> patchRental(@PathVariable Long id, @RequestBody RentalRequest updates) {
+    public ResponseEntity<RentalRequest> patchRental(@PathVariable Long id,@RequestBody RentalRequest updates) {
         RentalRequest updatedRental = rentalService.partialUpdateRentalById(id, updates);
         return ResponseEntity.ok(updatedRental);
     }

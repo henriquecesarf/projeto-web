@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.seuprojeto.projeto_web.requests.*;
@@ -38,7 +39,27 @@ public class VehicleService {
         if (!categoryRepository.existsById(veiculo.getCategoryId())) {
             throw new EntityNotFoundException("Categoria com ID " + veiculo.getCategoryId() + " não existe.");
         }
+
+        System.out.println("------------------------------");
+        System.out.println(veiculo);
+        System.out.println("------------------------------");
+
         VehicleEntity vehicleEntity = modelMapper.map(veiculo, VehicleEntity.class);
+
+        System.out.println("------------------------------");
+        System.out.println(vehicleEntity);
+        System.out.println("------------------------------");
+
+        // Verifica se o ID já está definido (não nulo) e, se estiver, define como null para garantir inserção
+        if (vehicleEntity.getId() != null) {
+            vehicleEntity.setId(null); // Garante que o Hibernate faça a inserção e não a atualização
+        }
+
+        // Verifica se a data de registro não foi fornecida e define como a data atual
+        if (vehicleEntity.getRegistrationDate() == null) {
+            vehicleEntity.setRegistrationDate(LocalDateTime.now()); // Define a data atual
+        }
+      
         vehicleRepository.save(vehicleEntity);
 
         return vehicleEntity;

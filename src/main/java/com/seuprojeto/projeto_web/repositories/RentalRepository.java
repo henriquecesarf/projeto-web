@@ -2,7 +2,9 @@ package com.seuprojeto.projeto_web.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.seuprojeto.projeto_web.entities.ClientEntity;
 import com.seuprojeto.projeto_web.entities.RentalEntity;
+import com.seuprojeto.projeto_web.entities.VehicleEntity;
 
 public interface RentalRepository extends JpaRepository<RentalEntity, Long>{
     // Verificar se existem locações ativas para um cliente
@@ -11,5 +13,9 @@ public interface RentalRepository extends JpaRepository<RentalEntity, Long>{
     default boolean existsByVehicleIdAndDataFimIsNull(Long veiculoId) {
         return false;
     }
+
+    boolean existsByVehicleAndIsActiveTrue(VehicleEntity vehicle);
+
+    boolean existsByClientAndIsActiveTrue(ClientEntity client);
 
 }

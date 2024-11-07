@@ -6,10 +6,12 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.seuprojeto.projeto_web.enums.Exchange;
 @Entity
 @Data
 @Table(name = "vehicle")
 public class VehicleEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,8 +34,9 @@ public class VehicleEntity {
     @Column(nullable = false)
     private String color; //color
 
-    @Column(nullable = false)
-    private String exchange; //cambio
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)    
+    private Exchange exchange; //cambio
 
     @Column(nullable = false)
     private Double km; //kilometragem
@@ -47,7 +50,7 @@ public class VehicleEntity {
     @Column(nullable = false)
     private Boolean available = true; //disponivel
 
-    @Column(nullable = false)
+    @ElementCollection
     private List<String> accessories; //acessorios
 
     @Column(nullable = false)

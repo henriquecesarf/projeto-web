@@ -5,6 +5,8 @@ import lombok.Data;
 
 import java.util.List;
 
+import com.seuprojeto.projeto_web.enums.Exchange;
+
 @Data
 public class VehicleRequest {
 
@@ -27,8 +29,8 @@ public class VehicleRequest {
     @NotBlank(message = "A cor é obrigatória.")
     private String color;
 
-    @NotBlank(message = "O tipo de câmbio é obrigatório.")
-    private String exchange;
+    @NotNull(message = "O tipo de câmbio é obrigatório.")
+    private Exchange exchange;
 
     @NotNull(message = "A quilometragem é obrigatória.")
     @PositiveOrZero(message = "A quilometragem deve ser um valor positivo ou zero.")
@@ -58,7 +60,7 @@ public class VehicleRequest {
     public VehicleRequest() {
     }
 
-    public VehicleRequest(String name, String manufacturer, String version, String urlFipe, String plate, String color, String exchange, Double km, Integer capacityPassengers, Integer volumeLoad, Boolean available, List<String> accessories, Double valuedaily, Long categoryId) {
+    public VehicleRequest(String name, String manufacturer, String version, String urlFipe, String plate, String color, Exchange exchange, Double km, Integer capacityPassengers, Integer volumeLoad, Boolean available, List<String> accessories, Double valuedaily, Long categoryId) {
         this.name = name;
         this.manufacturer = manufacturer;
         this.version = version;

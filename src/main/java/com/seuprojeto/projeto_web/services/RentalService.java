@@ -1,6 +1,7 @@
 package com.seuprojeto.projeto_web.services;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,8 +13,12 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seuprojeto.projeto_web.entities.ClientEntity;
 import com.seuprojeto.projeto_web.entities.OptionalEntity;
 import com.seuprojeto.projeto_web.entities.RentalEntity;
+import com.seuprojeto.projeto_web.entities.VehicleEntity;
+// import com.seuprojeto.projeto_web.entities.VehicleEntity;
+import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
 import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.repositories.ClientRepository;
@@ -60,7 +65,7 @@ public class RentalService {
         Optional<RentalEntity> rentalEntityOptional = rentalRepository.findById(id);
         
         if (rentalEntityOptional.isEmpty()) {
-            throw new EntityNotFoundException("Rental with ID " + id + " not found");
+            throw new EntityNotFoundException("Rental with ID: " + id + " not found");
         }
         
         RentalEntity rentalEntity = rentalEntityOptional.get();
@@ -78,17 +83,37 @@ public class RentalService {
 
         // Verificando se o cliente existe
         rental.setClient(clientRepository.findById(rentalRequest.getClientId())
-            .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado")));
+            .orElseThrow(() -> new EntityNotFoundException("Client not found")));
+
+        // Verificando se a CNH do cliente está vencida
+        if (isCnhExpired(clientRepository.findById(rentalRequest.getClientId()))) {
+            throw new DuplicateRegisterException("Client's CNH is expired");
+        }
+
+        if (isClientHasActiveRental(rentalRequest.getClientId())) {
+            // Lógica se o veículo já estiver alugado
+            throw new DuplicateRegisterException("The client already has an active rental.");
+        }
 
         // Verificando se o veículo existe
         rental.setVehicle(vehicleRepository.findById(rentalRequest.getVehicleId())
-            .orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado")));
+            .orElseThrow(() -> new EntityNotFoundException("Vehicle not found")));
+
+        if (isVehicleRented(rentalRequest.getVehicleId())) {
+            // Lógica se o veículo já estiver alugado
+            throw new DuplicateRegisterException("Vehicle is already rented.");
+        }
+
+        // // Verificando se o veículo tem bloqueio
+        // if (isVehicleBlocked(vehicle)) {
+        //     throw new DuplicateRegisterException("Vehicle is blocked and cannot be rented");
+        // }
 
         List<RentalRequest.OptionalRequest> optionals = rentalRequest.getOptionals();
         if (optionals != null && !optionals.isEmpty()) {
             for (RentalRequest.OptionalRequest optional : optionals) {
                 if (!optionalRepository.existsById(optional.getOptionalId())) {
-                    throw new EntityNotFoundException("Opcional com ID " + optional.getOptionalId() + " não encontrado");
+                    throw new EntityNotFoundException("Optional with ID: " + optional.getOptionalId() + " not found");
                 }
             }
 
@@ -98,7 +123,7 @@ public class RentalService {
                 String optionalsJson = objectMapper.writeValueAsString(optionals);
                 rental.setOptionals(optionalsJson);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("Erro ao converter opcionais para JSON", e);
+                throw new RuntimeException("Failed to convert Optionals to JSON", e);
             }
         }
 
@@ -135,9 +160,9 @@ public class RentalService {
     
         // Atualizando informações da locação
         rentalEntity.setClient(clientRepository.findById(rentalRequest.getClientId())
-                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado")));
+                .orElseThrow(() -> new EntityNotFoundException("Client not found")));
         rentalEntity.setVehicle(vehicleRepository.findById(rentalRequest.getVehicleId())
-                .orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado")));
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle not found")));
     
         if (rentalRequest.getOptionals() != null && !rentalRequest.getOptionals().isEmpty()) {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -145,7 +170,7 @@ public class RentalService {
                 String optionalsJson = objectMapper.writeValueAsString(rentalRequest.getOptionals());
                 rentalEntity.setOptionals(optionalsJson);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("Erro ao converter opcionais para JSON", e);
+                throw new RuntimeException("Failed to convert Optionals to JSON", e);
             }
         }
     
@@ -172,19 +197,19 @@ public class RentalService {
         // Atualizando apenas campos específicos, se presentes
         if (rentalRequest.getClientId() != null) {
             rentalEntity.setClient(clientRepository.findById(rentalRequest.getClientId())
-                    .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado")));
+                    .orElseThrow(() -> new EntityNotFoundException("Client not found")));
         }
     
         if (rentalRequest.getVehicleId() != null) {
             rentalEntity.setVehicle(vehicleRepository.findById(rentalRequest.getVehicleId())
-                    .orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado")));
+                    .orElseThrow(() -> new EntityNotFoundException("Vehicle not found")));
         }
     
         // Atualizar opcionais se a lista não estiver vazia
         if (rentalRequest.getOptionals() != null && !rentalRequest.getOptionals().isEmpty()) {
             for (RentalRequest.OptionalRequest optional : rentalRequest.getOptionals()) {
                 if (!optionalRepository.existsById(optional.getOptionalId())) {
-                    throw new EntityNotFoundException("Opcional com ID " + optional.getOptionalId() + " não encontrado");
+                    throw new EntityNotFoundException("Optional with ID: " + optional.getOptionalId() + " not found");
                 }
             }
     
@@ -193,7 +218,7 @@ public class RentalService {
                 String optionalsJson = objectMapper.writeValueAsString(rentalRequest.getOptionals());
                 rentalEntity.setOptionals(optionalsJson);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("Erro ao converter opcionais para JSON", e);
+                throw new RuntimeException("Failed to convert Optionals to JSON", e);
             }
             
         }
@@ -244,12 +269,12 @@ public class RentalService {
     private void updateOptionalQuantities(List<RentalRequest.OptionalRequest> optionals) {
         for (RentalRequest.OptionalRequest optional : optionals) {
             OptionalEntity optionalEntity = optionalRepository.findById(optional.getOptionalId())
-                .orElseThrow(() -> new EntityNotFoundException("Opcional com ID " + optional.getOptionalId() + " não encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Optional with ID: " + optional.getOptionalId() + " not found"));
 
             // Atualizando a quantidade
             int newQuantity = optionalEntity.getQtdAvailable() - optional.getQuantity();
             if (newQuantity < 0) {
-                throw new RuntimeException("Quantidade do opcional " + optional.getOptionalId() + " insuficiente no estoque.");
+                throw new RuntimeException("Quantity of optional " + optional.getOptionalId() + " insufficient in stock.");
             }
             optionalEntity.setQtdAvailable(newQuantity);
             optionalRepository.save(optionalEntity); // Salva a atualização da quantidade
@@ -264,6 +289,41 @@ public class RentalService {
         } catch (IOException e) {
             throw new RuntimeException("Failed to convert JSON to Optionals", e);
         }
+    }
+
+    private boolean isVehicleRented(Long id) {
+        // Método para verificar se o veículo tem uma locação ativa
+        Optional<VehicleEntity> vehicleOptional = vehicleRepository.findById(id);
+        
+        // Verifique se o veículo existe
+        if (vehicleOptional.isPresent()) {
+            VehicleEntity vehicle = vehicleOptional.get();
+            // Chama o método que verifica se o veículo está alugado e ativo
+            return rentalRepository.existsByVehicleAndIsActiveTrue(vehicle);
+        } else {
+            // Se o veículo não foi encontrado, retorna false
+            return false;
+        }
+    }
+
+    private boolean isClientHasActiveRental(Long id) {
+        // Método para verificar se o cliente já tem uma locação ativa
+        Optional<ClientEntity> clientOptional = clientRepository.findById(id);
+        
+        // Verifique se o cliente existe
+        if (clientOptional.isPresent()) {
+            ClientEntity client = clientOptional.get();
+            return rentalRepository.existsByClientAndIsActiveTrue(client);
+        } else {
+            // Se o cliente não foi encontrado, retorna false
+            return false;
+        }
+    }
+
+    private boolean isCnhExpired(Optional<ClientEntity> client) {
+            // Verificando se a CNH do cliente está vencida
+            LocalDate currentDate = LocalDate.now();
+            return client.get().getCnhDtMaturity().isBefore(currentDate);
     }
 
 }

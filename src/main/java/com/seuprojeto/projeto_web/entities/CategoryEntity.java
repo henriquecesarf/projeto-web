@@ -16,13 +16,13 @@ public class CategoryEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "fine_1_to_4_days", nullable = false)
     private Double fine1To4Days;
 
-    @Column(nullable = false)
+    @Column(name = "fine_5_to_9_days", nullable = false)
     private Double fine5To9Days;
 
-    @Column(nullable = false)
+    @Column(name = "fine_10_Days_or_more", nullable = false)
     private Double fine10DaysOrMore;
 
     @Column(nullable = false)
