@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.seuprojeto.projeto_web.entities.OptionalEntity;
-import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
+import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.repositories.OptionalRepository;
 import com.seuprojeto.projeto_web.requests.OptionalRequest;
@@ -29,7 +29,7 @@ public class OptionalService {
     public OptionalRequest findOptionalById(Long id){
         Optional<OptionalEntity> optionalOptional = optionalRepository.findById(id);
         if(optionalOptional.isEmpty()){
-            throw new FieldNotFoundException("Optional with ID " + id + " not found");
+            throw new EntityNotFoundException("Optional with ID " + id + " not found");
         }
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(optionalOptional.get(), OptionalRequest.class);

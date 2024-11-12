@@ -2,13 +2,7 @@ package com.seuprojeto.projeto_web.entities;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -20,41 +14,46 @@ public class RentalEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long clientId; // Entidade Cliente
+    @ManyToOne
+    @JoinColumn(name = "client_id", nullable = false)
+    private ClientEntity client; // // Referência ao cliente associado
+
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id", nullable = false) // Chave estrangeira para o veículo
+    private VehicleEntity vehicle; // Referência ao veículo associado
+
+    @Column(nullable = true)
+    private String optionals; // String JSON para armazenar IDs e quantidades dos opcionais
 
     @Column(nullable = false)
-    private Long vehicleId; // Entidade Veículo
+    private LocalDateTime rentalDateTimeStart; // Data e hora da locação inicio
 
     @Column(nullable = false)
-    private String optionals;
+    private LocalDateTime rentalDateTimeEnd; // Data e hora da locaçãofim
 
     @Column(nullable = false)
-    private LocalDateTime rentalDateTime; // Data e hora da locação
+    private Double dailyRate; // Valor da diária
 
     @Column(nullable = false)
-    private double dailyRate; // Valor da diária
+    private Integer totalDays; // Total de diárias
 
     @Column(nullable = false)
-    private int totalDays; // Total de diárias
+    private Double totalAmount; // Valor a ser pago
 
     @Column(nullable = false)
-    private double totalAmount; // Valor a ser pago
+    private Double depositAmount; // Valor da caução
+
+    @Column(nullable = true)
+    private Double totalOptionalItemsValue; // Valor total dos itens opcionais
 
     @Column(nullable = false)
-    private double depositAmount; // Valor da caução
+    private String plateVehicle; // Placa do veículo
 
     @Column(nullable = false)
-    private double totalOptionalItemsValue; // Valor total dos itens opcionais
+    private Double initialMileage; // Quilometragem de retirada
 
     @Column(nullable = false)
-    private String vehiclePlate; // Placa do veículo
-
-    @Column(nullable = false)
-    private double initialMileage; // Quilometragem de retirada
-
-    @Column(nullable = false)
-    private double returnMileage; // Quilometragem de devolução
+    private Double returnMileage; // Quilometragem de devolução
 
     @Column(nullable = false)
     private LocalDateTime registrationDate; // Data de cadastro

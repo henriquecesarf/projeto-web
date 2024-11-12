@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
-import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
+import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.requests.ClientRequest;
 import com.seuprojeto.projeto_web.services.ClientService;
@@ -40,7 +40,7 @@ public class ClientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClientRequest> getById(@PathVariable Long id) throws FieldNotFoundException {
+    public ResponseEntity<ClientRequest> getById(@PathVariable Long id) throws EntityNotFoundException {
         ClientRequest client = clientService.findClientById(id);
         return ResponseEntity.ok(client);
     }

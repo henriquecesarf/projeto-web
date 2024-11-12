@@ -20,7 +20,7 @@ import com.seuprojeto.projeto_web.enums.CnhCategory;
 import com.seuprojeto.projeto_web.enums.Sexo;
 import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
 import com.seuprojeto.projeto_web.exceptions.FieldInvalidException;
-import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
+import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.repositories.ClientRepository;
 import com.seuprojeto.projeto_web.repositories.RentalRepository;
@@ -59,7 +59,7 @@ public class ClientService {
         ClientEntity clientEntity = clientRepository.findByIdAndStExcluidoFalse(id);
         
         if (clientEntity == null) {
-            throw new FieldNotFoundException("Client with ID " + id + " not found");
+            throw new EntityNotFoundException("Client with ID " + id + " not found");
         }
         
         ModelMapper modelMapper = new ModelMapper();
@@ -89,7 +89,7 @@ public class ClientService {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
         
         if (clientOptional.isEmpty()) {
-            throw new FieldNotFoundException("Cliente com ID " + id + " não encontrado");
+            throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado");
         }
 
         // Verifica se o cliente possui locações ativas
@@ -122,7 +122,7 @@ public class ClientService {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
         
         if (clientOptional.isEmpty()) {
-            throw new FieldNotFoundException("Cliente com ID " + id + " não encontrado");
+            throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado");
         }
 
         ClientEntity clientEntity = clientOptional.get();
@@ -138,7 +138,7 @@ public class ClientService {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
         
         if (clientOptional.isEmpty()) {
-            throw new FieldNotFoundException("Cliente com ID " + id + " não encontrado");
+            throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado");
         }
 
         ClientEntity clientEntity = clientOptional.get();

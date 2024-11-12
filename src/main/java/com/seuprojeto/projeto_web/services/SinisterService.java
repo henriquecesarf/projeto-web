@@ -7,7 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
+import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.repositories.SinisterRepository;
 import com.seuprojeto.projeto_web.requests.SinisterRequest;
@@ -30,7 +30,7 @@ public class SinisterService {
     public SinisterRequest findSinisterById(Long id){
         Optional<SinisterEntity> sinisterOptional = sinisterRepository.findById(id);
         if(sinisterOptional.isEmpty()){
-            throw new FieldNotFoundException("Sinister with ID " + id + " not found");
+            throw new EntityNotFoundException("Sinister with ID " + id + " not found");
         }
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(sinisterOptional.get(), SinisterRequest.class);
