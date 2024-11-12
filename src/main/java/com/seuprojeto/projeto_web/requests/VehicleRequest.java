@@ -77,4 +77,6 @@ public class VehicleRequest {
         this.categoryId = categoryId;
     }
 
+    public <T> VehicleRequest(String carro, String fabricanteX, String s, String url, String s1, String preto, Exchange exchange, double v, int i, int i1, boolean b, List<T> list, double v1) {
+    }
 }

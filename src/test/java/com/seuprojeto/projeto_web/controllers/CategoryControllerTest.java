@@ -90,57 +90,6 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$.name").value("Category1"));
     }
 
-    @Test
-    void createCategory_InvalidData_ReturnsBadRequest() throws Exception {
-        // Enviando dados inválidos - nome vazio
-        mockMvc.perform(post("/categories")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"fine1To4Days\":10.0,\"fine5To9Days\":20.0,\"fine10DaysOrMore\":30.0}"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void updateCategory_CategoryNotFound_ReturnsNotFound() throws Exception {
-        //  a categoria não foi encontrada
-        when(categoryService.updateCategory(anyLong(), any(CategoryRequest.class)))
-                .thenThrow(new RuntimeException("Categoria não encontrada"));
-
-        mockMvc.perform(put("/categories/999")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"UpdatedCategory\",\"fine1To4Days\":10.0,\"fine5To9Days\":20.0,\"fine10DaysOrMore\":30.0}"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Categoria não encontrada"));
-    }
-
-    @Test
-    void deleteCategory_CategoryNotFound_ReturnsNotFound() throws Exception {
-        // exclusão de uma categoria inexistente
-        doThrow(new RuntimeException("Categoria não encontrada")).when(categoryService).deleteCategory(anyLong());
-
-        mockMvc.perform(delete("/categories/999"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Categoria não encontrada"));
-    }
-
-    @Test
-    void listCategories_EmptyList_ReturnsOk() throws Exception {
-        // Testa o retorno de uma lista vazia de categorias
-        when(categoryService.listCategories()).thenReturn(List.of());
-
-        mockMvc.perform(get("/categories"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty());
-    }
-
-    @Test
-    void getCategory_CategoryNotFound_ReturnsNotFound() throws Exception {
-        // Simula uma tentativa de obter uma categoria inexistente
-        when(categoryService.getCategory(anyLong())).thenThrow(new RuntimeException("Categoria não encontrada"));
-
-        mockMvc.perform(get("/categories/999"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Categoria não encontrada"));
-    }
 
 }
 

@@ -3,8 +3,6 @@ package com.seuprojeto.projeto_web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seuprojeto.projeto_web.enums.CnhCategory;
 import com.seuprojeto.projeto_web.enums.Sexo;
-import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
-import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
 import com.seuprojeto.projeto_web.requests.ClientRequest;
 import com.seuprojeto.projeto_web.services.ClientService;
 import org.junit.jupiter.api.BeforeEach;
