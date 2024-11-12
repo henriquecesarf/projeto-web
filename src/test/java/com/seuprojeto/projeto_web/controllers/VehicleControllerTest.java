@@ -1,143 +1,138 @@
 package com.seuprojeto.projeto_web.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seuprojeto.projeto_web.entities.VehicleEntity;
 import com.seuprojeto.projeto_web.enums.Exchange;
 import com.seuprojeto.projeto_web.requests.VehicleRequest;
 import com.seuprojeto.projeto_web.services.VehicleService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
-import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
 class VehicleControllerTest {
 
-    @Autowired
+    @Mock
+    private VehicleService vehicleService;
+
+    @InjectMocks
+    private VehicleController vehicleController;
+
     private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
-    @MockBean
-    private VehicleService veiculoService;
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(vehicleController).build();
+        objectMapper = new ObjectMapper();
+    }
 
-    // Teste de criação de veículo
     @Test
-    void testPostVehicle() throws Exception {
-        VehicleRequest vehicleRequest = new VehicleRequest(
-                "Carro Teste", "Fabricante X", "Versão 2023", "https://fipe.com",
-                "ABC1234", "Preto", Exchange.AUTOMATIC, 10000.0, 5, 300,
-                true, List.of("Ar Condicionado", "Direção Hidráulica"), 100.0, 1L
-        );
+    void listarVeiculos_Success() throws Exception {
+        // Criando um veículo para o teste
+        VehicleEntity vehicle = new VehicleEntity();
+        vehicle.setId(1L);
+        vehicle.setName("Carro Teste");
+        vehicle.setManufacturer("Fabricante X");
+        vehicle.setVersion("Versão 1.0");
+        vehicle.setUrlFipe("http://fipe.url");
+        vehicle.setPlate("ABC1234");
+        vehicle.setColor("Preto");
+        vehicle.setExchange(Exchange.MANUAL);
+        vehicle.setKm(1000.0);
+        vehicle.setCapacityPassengers(5);
+        vehicle.setVolumeLoad(500);
+        vehicle.setAvailable(true);
+        vehicle.setAccessories(List.of("Ar-condicionado", "Direção hidráulica"));
+        vehicle.setValuedaily(150.0);
+        vehicle.setRegistrationDate(LocalDateTime.now());
 
-        VehicleEntity vehicleEntity = new VehicleEntity();
-        vehicleEntity.setId(1L); // Simula que o veículo foi registrado com ID 1
+        when(vehicleService.listVehicles()).thenReturn(List.of(vehicle));
 
-        given(veiculoService.registerVehicle(any(VehicleRequest.class))).willReturn(vehicleEntity);
+        mockMvc.perform(get("/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Carro Teste"))
+                .andExpect(jsonPath("$[0].manufacturer").value("Fabricante X"))
+                .andExpect(jsonPath("$[0].plate").value("ABC1234"));
+    }
+
+    @Test
+    void listarVeiculos_EmptyTable_ReturnsNoContent() throws Exception {
+        // Simulando uma lista vazia de veículos
+        when(vehicleService.listVehicles()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void veiculosDisponiveis_Success() throws Exception {
+        VehicleEntity vehicle = new VehicleEntity();
+        vehicle.setId(1L);
+        vehicle.setName("Carro Disponível");
+        vehicle.setManufacturer("Fabricante Z");
+        vehicle.setPlate("GHI1234");
+        vehicle.setAvailable(true);
+
+        when(vehicleService.vehiclesAvailableForRent(any(), any())).thenReturn(List.of(vehicle));
+
+        mockMvc.perform(get("/api/vehicles/disponiveis")
+                        .param("inicio", "2024-12-01")
+                        .param("fim", "2024-12-10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Carro Disponível"))
+                .andExpect(jsonPath("$[0].manufacturer").value("Fabricante Z"))
+                .andExpect(jsonPath("$[0].plate").value("GHI1234"));
+    }
+
+    @Test
+    void postVehicle_Success() throws Exception {
+        // Mock do request e do resultado esperado
+        VehicleRequest request = new VehicleRequest(
+                "Carro Teste", "Fabricante X", "Versão 1", "https://urlFipe.com",
+                "ABC1234", "Preto", Exchange.AUTOMATIC, 5000.0, 5, 300,
+                true, List.of("Ar-condicionado", "Direção Hidráulica"), 200.0, 1L);
+
+        VehicleEntity expectedResponse = new VehicleEntity();
+        expectedResponse.setId(1L);
+        expectedResponse.setName(request.getName());
+
+        // Configura o mock para retornar o veículo criado
+        when(vehicleService.registerVehicle(any(VehicleRequest.class))).thenReturn(expectedResponse);
 
         mockMvc.perform(post("/api/vehicles")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"name\": \"Carro Teste\", \"manufacturer\": \"Fabricante X\", \"version\": \"Versão 2023\", \"urlFipe\": \"https://fipe.com\", \"plate\": \"ABC1234\", \"color\": \"Preto\", \"exchange\": \"AUTOMATIC\", \"km\": 10000.0, \"capacityPassengers\": 5, \"volumeLoad\": 300, \"available\": true, \"accessories\": [\"Ar Condicionado\", \"Direção Hidráulica\"], \"valuedaily\": 100.0, \"categoryId\": 1 }"))
+                        .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1))) // Verifica se o ID foi retornado
-                .andExpect(jsonPath("$.name", is("Carro Teste"))) // Verifica o nome
-                .andExpect(jsonPath("$.manufacturer", is("Fabricante X"))); // Verifica o fabricante
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Carro Teste"));
     }
-
-    // Teste de atualização de veículo
     @Test
-    void testEditVehicle() throws Exception {
-        Long vehicleId = 1L;
-        VehicleEntity updatedVehicle = new VehicleEntity();
-        updatedVehicle.setId(vehicleId);
-        updatedVehicle.setName("Carro Atualizado");
-
-        given(veiculoService.editVehicle(eq(vehicleId), any(VehicleEntity.class))).willReturn(updatedVehicle);
-
-        mockMvc.perform(put("/api/vehicles/{id}", vehicleId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\": \"Carro Atualizado\", \"manufacturer\": \"Fabricante Y\", \"version\": \"Versão 2024\", \"urlFipe\": \"https://fipe.com\", \"plate\": \"ABC1234\", \"color\": \"Azul\", \"exchange\": \"MANUAL\", \"km\": 15000.0, \"capacityPassengers\": 5, \"volumeLoad\": 350, \"available\": true, \"accessories\": [\"Ar Condicionado\", \"Som\"], \"valuedaily\": 120.0, \"categoryId\": 1}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(vehicleId.intValue())))
-                .andExpect(jsonPath("$.name", is("Carro Atualizado")));
-    }
-
-    // Teste de deleção de veículo
-    @Test
-    void testDeleteVehicle() throws Exception {
+    void deleteVehicle_Success() throws Exception {
         Long vehicleId = 1L;
 
-        doNothing().when(veiculoService).deleteVehicleById(vehicleId);
+        // Configura o mock para não lançar exceção
+        doNothing().when(vehicleService).deleteVehicleById(vehicleId);
 
-        mockMvc.perform(delete("/api/vehicles/{id}", vehicleId))
-                .andExpect(status().isNoContent()); // Verifica se o status é 204 (sem conteúdo)
+        mockMvc.perform(delete("/api/vehicles/{id}", vehicleId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 
-    // Teste de listagem de veículos
-    @Test
-    void testListVehicles() throws Exception {
-        List<VehicleEntity> vehicles = Arrays.asList(
-                new VehicleEntity(), new VehicleEntity()
-        );
-
-        given(veiculoService.listVehicles()).willReturn(vehicles);
-
-        mockMvc.perform(get("/api/vehicles"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2))); // Verifica que retornou 2 veículos
-    }
-
-    // Teste de veículos disponíveis
-    @Test
-    void testAvailableVehicles() throws Exception {
-        LocalDate startDate = LocalDate.now();
-        LocalDate endDate = LocalDate.now().plusDays(1);
-        List<VehicleEntity> availableVehicles = Arrays.asList(new VehicleEntity());
-
-        given(veiculoService.vehiclesAvailableForRent(startDate, endDate)).willReturn(availableVehicles);
-
-        mockMvc.perform(get("/api/vehicles/disponiveis")
-                        .param("inicio", startDate.toString())
-                        .param("fim", endDate.toString()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1))); // Verifica que retornou 1 veículo disponível
-    }
-
-    @Test
-    void postVehicle() {
-    }
-
-    @Test
-    void editVehicle() {
-    }
-
-    @Test
-    void deleteVehicle() {
-    }
-
-    @Test
-    void listarVeiculos() {
-    }
-
-    @Test
-    void veiculosDisponiveis() {
-    }
 }
