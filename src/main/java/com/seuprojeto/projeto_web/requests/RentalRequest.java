@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RentalRequest {
 
+
     @NotNull(message = "O id do cliente do veículo é obrigatória.")
     private Long clientId;
 
@@ -55,6 +56,7 @@ public class RentalRequest {
 
     @NotNull(message = "A categoria do veículo é obrigatória.")
     private boolean isActive = true;
+
 
     @Data
     @NoArgsConstructor

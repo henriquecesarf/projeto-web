@@ -29,6 +29,9 @@ public class RentalController {
     @Autowired
     private RentalService rentalService;
 
+    public RentalController(RentalService rentalService) {
+    }
+
     @GetMapping
     public ResponseEntity<List<RentalRequest>> getAllRentals() throws TableEmptyException {
         List<RentalRequest> rentals = rentalService.findAllRentals();

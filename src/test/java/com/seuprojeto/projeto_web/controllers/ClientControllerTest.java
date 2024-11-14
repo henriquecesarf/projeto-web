@@ -152,7 +152,7 @@ class ClientControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        // Verifique se a resposta contém a mensagem correta
+
         mockMvc.perform(post("/api/client")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidClient)))
