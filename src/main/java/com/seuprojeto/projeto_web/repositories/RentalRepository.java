@@ -1,8 +1,9 @@
 package com.seuprojeto.projeto_web.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.seuprojeto.projeto_web.entities.ClientEntity;
 import com.seuprojeto.projeto_web.entities.RentalEntity;
 import com.seuprojeto.projeto_web.entities.VehicleEntity;
 
@@ -16,6 +17,10 @@ public interface RentalRepository extends JpaRepository<RentalEntity, Long>{
 
     boolean existsByVehicleAndIsActiveTrue(VehicleEntity vehicle);
 
-    boolean existsByClientAndIsActiveTrue(ClientEntity client);
+    boolean existsByIdAndIsActiveTrue(Long rentalId);
+
+    List<RentalEntity> findByClientId(Long id);
+
+    List<RentalEntity> findAllByClientIdAndIsActiveFalse(Long clientId);
 
 }

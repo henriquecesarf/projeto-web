@@ -19,4 +19,6 @@ public interface ClientRepository extends JpaRepository<ClientEntity, Long> {
     ClientEntity findByIdAndStExcluidoFalse(Long id);    
     // Método para buscar clientes com st_excluido como false
     List<ClientEntity> findByStExcluidoFalse();
+
+    boolean existsByIdAndCnpjNull(Long id);
 }

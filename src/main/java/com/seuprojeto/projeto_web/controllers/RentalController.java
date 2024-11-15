@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.seuprojeto.projeto_web.entities.RentalEntity;
+import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
 import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
+import com.seuprojeto.projeto_web.exceptions.FieldInvalidException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
+import com.seuprojeto.projeto_web.requests.RentalCheckoutRequest;
 import com.seuprojeto.projeto_web.requests.RentalRequest;
 import com.seuprojeto.projeto_web.services.RentalService;
 
@@ -42,7 +46,7 @@ public class RentalController {
     }
 
     @PostMapping
-    public ResponseEntity<RentalRequest> postRental(@Valid @RequestBody RentalRequest rentalRequest) throws EntityNotFoundException {
+    public ResponseEntity<RentalRequest> postRental(@Valid @RequestBody RentalRequest rentalRequest) throws EntityNotFoundException, DuplicateRegisterException {
         RentalRequest rental = rentalService.createRental(rentalRequest) ;
         return ResponseEntity.status(HttpStatus.CREATED).body(rental);
     }
@@ -63,6 +67,29 @@ public class RentalController {
     public ResponseEntity<RentalRequest> patchRental(@PathVariable Long id,@RequestBody RentalRequest updates) {
         RentalRequest updatedRental = rentalService.partialUpdateRentalById(id, updates);
         return ResponseEntity.ok(updatedRental);
+    }
+
+    @GetMapping("/history/{id}")
+    public ResponseEntity<List<RentalEntity>> getRentalHistory(@PathVariable Long id) throws TableEmptyException {
+        List<RentalEntity> rentals = rentalService.getRentalHistoryById(id);
+        return ResponseEntity.ok(rentals);
+    }
+
+    // Endpoint para adicionar um sinistro a uma locação
+    @PostMapping("/{rentalId}/sinister/{sinisterId}")
+    public ResponseEntity<String> adicionarSinistroARental(
+            @PathVariable Long rentalId, 
+            @PathVariable Long sinisterId) throws EntityNotFoundException, DuplicateRegisterException {
+
+        rentalService.adicionarSinistroARental(rentalId, sinisterId);
+        return ResponseEntity.ok("Sinistro adicionado à locação com sucesso");
+    }
+
+    // Endpoint para dar baixa em uma locação
+    @PostMapping("/{rentalId}/checkout")
+    public ResponseEntity<String> checkoutRental(@PathVariable Long rentalId,@Valid @RequestBody RentalCheckoutRequest rentalCheckoutRequest) throws EntityNotFoundException, DuplicateRegisterException, FieldInvalidException {
+        rentalService.checkoutRental(rentalId, rentalCheckoutRequest);
+        return ResponseEntity.ok("Rental finished with success");
     }
 
 }

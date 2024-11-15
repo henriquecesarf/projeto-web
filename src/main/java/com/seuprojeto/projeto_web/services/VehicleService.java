@@ -40,15 +40,7 @@ public class VehicleService {
             throw new EntityNotFoundException("Categoria com ID " + veiculo.getCategoryId() + " não existe.");
         }
 
-        System.out.println("------------------------------");
-        System.out.println(veiculo);
-        System.out.println("------------------------------");
-
         VehicleEntity vehicleEntity = modelMapper.map(veiculo, VehicleEntity.class);
-
-        System.out.println("------------------------------");
-        System.out.println(vehicleEntity);
-        System.out.println("------------------------------");
 
         // Verifica se o ID já está definido (não nulo) e, se estiver, define como null para garantir inserção
         if (vehicleEntity.getId() != null) {

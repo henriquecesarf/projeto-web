@@ -2,6 +2,7 @@ package com.seuprojeto.projeto_web.requests;
 
 import java.time.LocalDate;
 
+import org.hibernate.validator.constraints.br.CNPJ;
 import org.hibernate.validator.constraints.br.CPF;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,6 +27,9 @@ public class ClientRequest {
     @NotBlank(message = "CPF é obrigatório")
     @CPF(message = "CPF deve ser válido")
     private String cpf;
+
+    @CNPJ(message = "CNPJ deve ser válido")
+    private String cnpj;
 
     @NotBlank(message = "Email é obrigatório")
     @Email(message = "Email deve ser válido")

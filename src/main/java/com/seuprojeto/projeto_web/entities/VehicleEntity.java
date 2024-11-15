@@ -6,6 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seuprojeto.projeto_web.enums.Exchange;
 @Entity
 @Data
@@ -66,8 +67,10 @@ public class VehicleEntity {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnore
     private CategoryEntity category; //categoria
 
     @OneToMany(mappedBy = "vehicle")
+    @JsonIgnore
     private List<RentalEntity> rentals; //alugueis
 }

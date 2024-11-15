@@ -38,6 +38,9 @@ public class ClientEntity {
     @Column(unique = true, nullable = false)
     private String cpf;
 
+    @Column(unique = true, nullable = true)
+    private String cnpj;
+
     @Column(unique = true, nullable = false)
     private String email;
 

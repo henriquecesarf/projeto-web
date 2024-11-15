@@ -32,6 +32,7 @@ CREATE TABLE client (
     name VARCHAR(255) NOT NULL,
     surname VARCHAR(255) NOT NULL,
     cpf VARCHAR(11) UNIQUE NOT NULL,
+    cnpj VARCHAR(14) UNIQUE,
     email VARCHAR(255) UNIQUE NOT NULL,
     sexo ENUM('M', 'F', 'X') NOT NULL,
     dt_nascimento DATE NOT NULL,
