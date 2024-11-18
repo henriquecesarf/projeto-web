@@ -3,6 +3,7 @@ package com.seuprojeto.projeto_web.services;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seuprojeto.projeto_web.entities.ClientEntity;
 import com.seuprojeto.projeto_web.entities.OptionalEntity;
@@ -32,7 +34,6 @@ import com.seuprojeto.projeto_web.repositories.SinisterRepository;
 import com.seuprojeto.projeto_web.repositories.VehicleRepository;
 import com.seuprojeto.projeto_web.requests.RentalCheckoutRequest;
 import com.seuprojeto.projeto_web.requests.RentalRequest;
-
 
 @Service
 public class RentalService {
@@ -373,19 +374,20 @@ public class RentalService {
         return total;
     }
 
-    public void checkoutRental(Long rentalId, RentalCheckoutRequest rentalCheckoutRequest) throws DuplicateRegisterException {
+    public String checkoutRental(Long rentalId, RentalCheckoutRequest rentalCheckoutRequest, int operation) throws DuplicateRegisterException {
 
         // System.out.println(rentalSinisterRepository.existsByRentalIdAndSinisterId(rentalId, 7));        
         RentalEntity rental = rentalRepository.findById(rentalId)
         .orElseThrow(() -> new EntityNotFoundException("Rental with ID " + rentalId + " not found"));
 
-        boolean existRentalActive = rentalRepository.existsByIdAndIsActiveTrue(rentalId);
-
-        if(!existRentalActive){
+        if(!rental.isActive()){
             throw new DuplicateRegisterException("Rental with ID " + rentalId + " has already been completed");
         }
 
         boolean existRentalWithSinister = rentalSinisterRepository.existsByRentalId(rentalId);
+
+        boolean existRentalWithSinisterSeven = rentalSinisterRepository.existsByRentalIdAndSinisterId(rentalId, 7);
+
 
         if (existRentalWithSinister && rentalCheckoutRequest.getValuesSinisters() == null) {
             throw new FieldInvalidException("One or more sinisters registered in the rental were identified, please include the valuesSinisters field in the body of the request with the total value of the registered sinisters");
@@ -393,16 +395,130 @@ public class RentalService {
         if (!existRentalWithSinister && rentalCheckoutRequest.getValuesSinisters() != null) {
             throw new FieldInvalidException("To add sinister values ​​to rental, it is necessary to register the sinister to rental");
         }
-        // if(rentalSinisterRepository.existsByRentalIdAndSinisterId(rentalId, 7) && rentalCheckoutRequest.getLostOptionals() == null && rentalCheckoutRequest.getLostOptionals().isEmpty()){
-        //     throw new FieldInvalidException("loss of optional was identified in the rental, please add a list with the ID and quantity of the lost optional to the body of the request");
-        // }
+        if (existRentalWithSinisterSeven && 
+            (rentalCheckoutRequest.getLostOptionals() == null || rentalCheckoutRequest.getLostOptionals().isEmpty())) {
+            throw new FieldInvalidException("Loss of optional was identified in the rental, please add a list with the ID and quantity of the lost optional to the body of the request");
+        }
+        List<RentalCheckoutRequest.LostOptionalRequest> optionals = rentalCheckoutRequest.getLostOptionals();
 
-        rental.setAmountPaid(rentalCheckoutRequest.getAmountPaid());
-        rental.setRentalDateTimeEnd(rentalCheckoutRequest.getRentalDateTimeEnd());
-        rental.setReturnMileage(rentalCheckoutRequest.getReturnMileage());
-        rental.setTotalAmount(calculateFinalValue(rental, rentalCheckoutRequest, existRentalWithSinister == true ? rentalCheckoutRequest.getValuesSinisters() : 0.0));
-        rental.setActive(rentalCheckoutRequest.isActive());
-        rentalRepository.save(rental);
+        List<RentalCheckoutRequest.LostOptionalRequest> rentalOptionals = new ArrayList<>();
+        
+        if (optionals != null && !optionals.isEmpty()) {
+
+            try {
+                rentalOptionals = objectMapper.readValue(rental.getOptionals(), new TypeReference<List<RentalCheckoutRequest.LostOptionalRequest>>() {});
+                // Agora rentalOptionals é uma lista de objetos LostOptionalRequest
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to convert JSON to Optionals", e);
+            } 
+
+            for (RentalCheckoutRequest.LostOptionalRequest optional : optionals) {
+                int rentalOptionalQuantity;
+                // Verificar se o ID do optional está presente em rentalOptionals
+                RentalCheckoutRequest.LostOptionalRequest matchedOptional = rentalOptionals.stream()
+                .filter(rentalOptional -> rentalOptional.getOptionalId().equals(optional.getOptionalId()))
+                .findFirst()
+                .orElse(null); // Pode retornar null se não encontrar o ID
+
+                if (matchedOptional != null) {
+                    // Se encontrar, armazene o quantity de rentalOptionals na variável
+                    rentalOptionalQuantity = matchedOptional.getQuantity();
+                } else {
+                    throw new EntityNotFoundException("Optional with ID " + optional.getOptionalId() + " not found in rentalOptionals.");
+                }
+
+                OptionalEntity optionalEntity = optionalRepository.findById(optional.getOptionalId())
+                    .orElseThrow(() -> new EntityNotFoundException("Optional with ID: " + optional.getOptionalId() + " not found"));
+    
+                if (optional.getQuantity() <= 0) {
+                    throw new FieldInvalidException("Optional quantity must be greater than or equal to 0");
+                }
+    
+                if (rentalOptionalQuantity - optional.getQuantity() < 0) {
+                    throw new DuplicateRegisterException("Quantity of optional " + optionalEntity.getId() + " must be less than or equal to the optional of the rental.");
+                }                
+            }
+        }
+
+        if(operation == 1){
+            rental.setAmountPaid(rentalCheckoutRequest.getAmountPaid());
+            rental.setRentalDateTimeEnd(rentalCheckoutRequest.getRentalDateTimeEnd());
+            rental.setReturnMileage(rentalCheckoutRequest.getReturnMileage());
+
+            String resultJson = calculateFinalValue(
+                rental,
+                rentalCheckoutRequest,
+                existRentalWithSinister ? rentalCheckoutRequest.getValuesSinisters() : 0.0
+            );
+
+            try {
+                // Converte o JSON retornado em um objeto JsonNode
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(resultJson);
+
+                // Extrai o valor total do JSON
+                Double totalAmount = jsonNode.get("totalAmount").asDouble();
+
+                // Define o valor total na entidade
+                rental.setTotalAmount(totalAmount);
+
+                // Lógica adicional para salvar ou processar a locação pode ser incluída aqui
+
+            } catch (Exception e) {
+                // Tratamento de exceções (JSON malformado, etc.)
+                e.printStackTrace();
+                throw new RuntimeException("Error parsing JSON from calculateFinalValue");
+            }        
+            rental.setActive(false);
+
+            boolean hasNonLowLevelSinisters = rental.getRentalSinisters().stream()
+            .anyMatch(rentalSinister -> !rentalSinister.getSinister().getGravity().equals("LOW"));
+
+            if (hasNonLowLevelSinisters) {
+                rental.getVehicle().setAvailable(false);
+            }
+
+            rentalRepository.save(rental);
+
+            for (RentalCheckoutRequest.LostOptionalRequest optionalRental : rentalOptionals) {
+                if(existRentalWithSinisterSeven){
+                    for (RentalCheckoutRequest.LostOptionalRequest optional : optionals) {
+                        if(optionalRental.getOptionalId() == optional.getOptionalId()){
+                            Optional<OptionalEntity> optionalEntity = optionalRepository.findById(optional.getOptionalId());
+                            optionalEntity.get().setQtdAvailable(optionalEntity.get().getQtdAvailable() + optionalRental.getQuantity() - optional.getQuantity());
+                            optionalRepository.save(optionalEntity.get());
+                        }
+                    }
+                }else{
+                    Optional<OptionalEntity> optionalEntity = optionalRepository.findById(optionalRental.getOptionalId());
+                    optionalEntity.get().setQtdAvailable(optionalEntity.get().getQtdAvailable() + optionalRental.getQuantity());
+                    optionalRepository.save(optionalEntity.get());
+                }
+            }
+
+            return "Rental finished with success";
+
+        }else{
+            String resultJson = calculateFinalValue(
+                rental,
+                rentalCheckoutRequest,
+                existRentalWithSinister ? rentalCheckoutRequest.getValuesSinisters() : 0.0
+            );
+
+            try {
+                // Converte o JSON retornado em um objeto JsonNode
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(resultJson);
+
+                // String details = jsonNode.get("details").asText();
+
+                return jsonNode.toString();
+            } catch (Exception e) {
+                // Tratamento de exceções (JSON malformado, etc.)
+                e.printStackTrace();
+                throw new RuntimeException("Error parsing JSON from calculateFinalValue");
+            }  
+        }
     }
 
     // Método para converter JSON em lista de OptionalRequest
@@ -415,32 +531,123 @@ public class RentalService {
         }
     }
 
-    public Double calculateFinalValue(RentalEntity rental, RentalCheckoutRequest rentalCheckoutRequest, Double valueSinister){
-
+    public String calculateFinalValue(RentalEntity rental, RentalCheckoutRequest rentalCheckoutRequest, Double valueSinister) {
         Long daysUsedByClient = ChronoUnit.DAYS.between(rental.getRentalDateTimeStart(), rentalCheckoutRequest.getRentalDateTimeEnd());
-
+    
         // Verifica se dataCheckin é anterior a dataCheckout
         if (rentalCheckoutRequest.getRentalDateTimeEnd().isBefore(rental.getRentalDateTimeStart())) {
-            throw new DuplicateRegisterException("the return date cannot be earlier than the initial date of the vehicle rental");
+            throw new DuplicateRegisterException("The return date cannot be earlier than the initial date of the vehicle rental");
         }
-
-        Long lateDays = daysUsedByClient - rental.getTotalDays(); 
-
-        if(lateDays <= 0.0){
-            return rental.getTotalAmount();
-        }else{
-            Double fineCategory = switch (lateDays.intValue()) {
+    
+        Long lateDays = daysUsedByClient - rental.getTotalDays();
+    
+        Double totalAmount;
+        Double fineCategory = 0.0;
+        Double valueDailyDelay = 0.0;
+        Double valueDailyExtras = 0.0;
+    
+        if (lateDays <= 0) {
+            totalAmount = rental.getTotalAmount();
+        } else {
+            fineCategory = switch (lateDays.intValue()) {
                 case 1, 2, 3, 4 -> rental.getVehicle().getCategory().getFine1To4Days();
                 case 5, 6, 7, 8, 9 -> rental.getVehicle().getCategory().getFine5To9Days();
                 default -> rental.getVehicle().getCategory().getFine10DaysOrMore();
             };
     
-            Double valueDailyDelay = rental.getDailyRate() * 0.01 * lateDays;
-            Double valueDailyExtras = rental.getDailyRate() * lateDays;
+            valueDailyDelay = rental.getDailyRate() * 0.01 * lateDays;
+            valueDailyExtras = rental.getDailyRate() * lateDays;
+            totalAmount = fineCategory + valueDailyDelay + valueDailyExtras + rental.getTotalAmount() + valueSinister;
+        }
+    
+        // Criar objeto de resposta com valores detalhados
+        CalculationResponse response = new CalculationResponse(
+            totalAmount,
+            new CalculationDetails(rental.getTotalDays(), lateDays, rental.getDailyRate(), rental.getTotalOptionalItemsValue(), fineCategory, valueDailyDelay, valueDailyExtras, valueSinister)
+        );
+    
+        // Converter para JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "{}"; // Retorna JSON vazio em caso de erro
+        }
+    }
+    
+    // Classe para os detalhes
+    class CalculationDetails {
+        private Integer contractedDays;
+        private Long latedDays;
+        private Double valueDaily;
+        private Double valueOptionals;
+        private Double fineCategory;
+        private Double fineForEachDayLate;
+        private Double valueDailyExtras;
+        private Double valueSinister;
 
-            System.out.println("valor total: " + (fineCategory + valueDailyDelay + valueDailyExtras + rental.getTotalAmount() + valueSinister));
+        public CalculationDetails(Integer contractedDays, Long latedDays, Double valueDaily, Double valueOptionals, Double fineCategory, Double fineForEachDayLate, Double valueDailyExtras, Double valueSinister) {
+            this.contractedDays = contractedDays;
+            this.latedDays = latedDays;
+            this.valueDaily = valueDaily;
+            this.valueOptionals = valueOptionals;
+            this.fineCategory = fineCategory;
+            this.fineForEachDayLate = fineForEachDayLate;
+            this.valueDailyExtras = valueDailyExtras;
+            this.valueSinister = valueSinister;
+        }
 
-            return fineCategory + valueDailyDelay + valueDailyExtras + rental.getTotalAmount() + valueSinister;
+        public Integer getContractedDays() {
+            return contractedDays;
+        }
+
+        public Long getLatedDays() {
+            return latedDays;
+        }
+
+        public Double getValueDaily() {
+            return valueDaily;
+        }
+
+        public Double getValueOptionals() {
+            return valueOptionals;
+        }
+
+        public Double getFineCategory() {
+            return fineCategory;
+        }
+
+        public Double getFineForEachDayLate() {
+            return fineForEachDayLate;
+        }
+
+        public Double getValueDailyExtras() {
+            return valueDailyExtras;
+        }
+
+        public Double getValueSinister() {
+            return valueSinister;
+        }
+    }
+
+    // Classe para a resposta principal
+    class CalculationResponse {
+        private Double totalAmount;
+        private CalculationDetails details;
+
+        public CalculationResponse(Double totalAmount, CalculationDetails details) {
+            this.totalAmount = totalAmount;
+            this.details = details;
+        }
+
+        // Getters
+        public Double getTotalAmount() {
+            return totalAmount;
+        }
+
+        public CalculationDetails getDetails() {
+            return details;
         }
     }
 }

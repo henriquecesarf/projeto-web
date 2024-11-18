@@ -15,16 +15,13 @@ import lombok.NoArgsConstructor;
 public class RentalCheckoutRequest {
 
     @NotNull(message = "A data e hora da devolução do veículo é obrigatória.")
-    private LocalDateTime rentalDateTimeEnd; // Data e hora da locaçãofim
+    private LocalDateTime rentalDateTimeEnd;
 
     @NotNull(message = "A kilometragem de devolução do veículo é obrigatoria.")
     private Double returnMileage;
 
     @NotNull(message = "O valor do pagamento recebido é obrigatorio.")
     private Double amountPaid;
-
-    @NotNull(message = "O estado do aluguel é obrigatorio.")
-    private boolean isActive;
 
     @PositiveOrZero(message = "O valor referente a cobrança dos sinistros deve ser maior ou igual a zero.")
     private Double valuesSinisters;

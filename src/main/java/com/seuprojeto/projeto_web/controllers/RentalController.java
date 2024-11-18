@@ -24,8 +24,10 @@ import com.seuprojeto.projeto_web.requests.RentalCheckoutRequest;
 import com.seuprojeto.projeto_web.requests.RentalRequest;
 import com.seuprojeto.projeto_web.services.RentalService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-
 @RestController
 @RequestMapping("api/rental")
 public class RentalController {
@@ -85,11 +87,28 @@ public class RentalController {
         return ResponseEntity.ok("Sinistro adicionado à locação com sucesso");
     }
 
-    // Endpoint para dar baixa em uma locação
-    @PostMapping("/{rentalId}/checkout")
+    @Operation(
+    summary = "Finalizar locação",
+    description = "Endpoint para realizar o checkout de uma locação. Ele calcula o valor final, verifica sinistros e atualiza o status.\n\n" +
+                 "São dados necessarios para o processo de checkout:\n" +
+                 "- Data final da locação no formato: 'AAAA-MM-DDTHH:MM'\n" +
+                 "- Kilometragem de devolução do veiculo\n" +
+                 "- Pagamento Efetuado pelo usuario\n" +
+                 "- valor total somado de todos os sinistros cadastrados na locação(caso houver sinistro)\n" +
+                 "- lista de objetos opcionais com id e quantidades dos opcionais perdidos, para atualização de inventário(caso houver sinistro de perda de opcionais)\n" +
+                 "- Atualização do status da locação"
+)
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Locação finalizada com sucesso."),
+    })
+    @PostMapping("/checkout/{rentalId}")
     public ResponseEntity<String> checkoutRental(@PathVariable Long rentalId,@Valid @RequestBody RentalCheckoutRequest rentalCheckoutRequest) throws EntityNotFoundException, DuplicateRegisterException, FieldInvalidException {
-        rentalService.checkoutRental(rentalId, rentalCheckoutRequest);
-        return ResponseEntity.ok("Rental finished with success");
+        return ResponseEntity.ok(rentalService.checkoutRental(rentalId, rentalCheckoutRequest, 1));
+    }
+
+    @PostMapping("/value-to-pay/{rentalId}")
+    public ResponseEntity<String> calculateValueToPay(@PathVariable Long rentalId,@Valid @RequestBody RentalCheckoutRequest rentalCheckoutRequest) throws EntityNotFoundException, DuplicateRegisterException, FieldInvalidException {
+        return ResponseEntity.ok(rentalService.checkoutRental(rentalId, rentalCheckoutRequest, 2));
     }
 
 }

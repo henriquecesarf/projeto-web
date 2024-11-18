@@ -11,7 +11,7 @@ VALUES
 -- inserção de sinistros
 INSERT INTO sinister (identification, gravity)
 VALUES 
-('Veículo C/Seguro Avariado, ', 'LOW'),
+('Veículo C/Seguro Avariado, ', 'MEDIUM'),
 ('Veículo S/Seguro Avariado, ', 'MEDIUM'),
 ('Veículo C/Seguro Perda Total, ', 'HIGH'),
 ('Veículo S/Seguro Perda Total, ', 'HIGH'),
