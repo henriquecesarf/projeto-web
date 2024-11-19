@@ -10,6 +10,8 @@ import com.seuprojeto.projeto_web.repositories.VehicleRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ public class VehicleService {
     ModelMapper modelMapper = new ModelMapper();
 
 
+    @CacheEvict(value = "vehicle", allEntries = true)
     public VehicleEntity registerVehicle(VehicleRequest veiculo) {
         if (vehicleRepository.findByPlate(veiculo.getPlate()).isPresent()) {
             throw new DuplicateRegisterException("Veículo com está placa já cadastrado");
@@ -57,6 +60,7 @@ public class VehicleService {
         return vehicleEntity;
     }
 
+    @CacheEvict(value = "vehicle", allEntries = true)
     public VehicleEntity editVehicle(Long id, VehicleEntity veiculoAtualizado) {
         VehicleEntity veiculo = vehicleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
@@ -73,6 +77,7 @@ public class VehicleService {
         return vehicleRepository.save(veiculo);
     }
 
+    @CacheEvict(value = "vehicle", allEntries = true)
     public void deleteVehicleById(Long id) {
         VehicleEntity veiculo = vehicleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
@@ -86,10 +91,12 @@ public class VehicleService {
         vehicleRepository.delete(veiculo);
     }
 
+    @Cacheable(value = "vehicle", key = "'all_vehicle'")
     public List<VehicleEntity> listVehicles() {
         return vehicleRepository.findAll();
     }
 
+    @Cacheable(value = "vehicle", key = "'#id'")
     public List<VehicleEntity> vehiclesAvailableForRent
             (LocalDate start, LocalDate end) {
         return vehicleRepository.findAvailableVehiclesForRent();

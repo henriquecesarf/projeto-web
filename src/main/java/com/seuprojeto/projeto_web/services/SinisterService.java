@@ -19,6 +19,7 @@ public class SinisterService {
     @Autowired
     private SinisterRepository sinisterRepository;
 
+
     public List<SinisterEntity> findAllSinisters() {
         List<SinisterEntity> sinisterEntity = sinisterRepository.findAll();
         if(sinisterEntity.isEmpty()){
