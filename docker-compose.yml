@@ -7,7 +7,8 @@ services:
       - 8080:8080
     depends_on:
       - maria_db
-    command: sh -c './wait-for maria_db:3306 -- java -jar app.jar'
+      - redis
+    command: sh -c './wait-for maria_db:3306 --wait-for redis:6379 -- java -jar app.jar'
 
   maria_db:
     image: "mariadb:10.5.8"
@@ -31,3 +32,9 @@ services:
       PMA_HOST: maria_db
       PMA_USER: java_to_dev
       PMA_PASSWORD: nE5kMc7JCGNqwDQM
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"

@@ -1,16 +1,17 @@
 package com.seuprojeto.projeto_web.services;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-
 import java.time.LocalDate;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;  // Import para o cache
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -25,11 +26,13 @@ import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.repositories.ClientRepository;
 import com.seuprojeto.projeto_web.repositories.RentalRepository;
 import com.seuprojeto.projeto_web.requests.ClientRequest;
+
 @Service
 public class ClientService {
 
     @Autowired
     private ClientRepository clientRepository;
+
     ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
@@ -38,44 +41,39 @@ public class ClientService {
     @Autowired
     private RentalRepository rentalRepository;
 
+    @Cacheable(value = "clients", key = "'all_clients'")  // Cache para todos os clientes
     public List<ClientRequest> findAllClients() {
         List<ClientEntity> clientEntities = clientRepository.findByStExcluidoFalse();
-    
+
         if (clientEntities.isEmpty()) {
             throw new TableEmptyException("No data registered");
         }
-    
-        ModelMapper modelMapper = new ModelMapper();
 
-        List<ClientRequest> clientRequests = clientEntities.stream()
+        return clientEntities.stream()
                 .map(entity -> modelMapper.map(entity, ClientRequest.class))
                 .collect(Collectors.toList());
-    
-        return clientRequests;
     }
 
+    @Cacheable(value = "clients", key = "#id")  // Cache para cliente por ID
     public ClientRequest findClientById(Long id) {
 
         ClientEntity clientEntity = clientRepository.findByIdAndStExcluidoFalse(id);
-        
+
         if (clientEntity == null) {
             throw new EntityNotFoundException("Client with ID " + id + " not found");
         }
-        
-        ModelMapper modelMapper = new ModelMapper();
+
         return modelMapper.map(clientEntity, ClientRequest.class);
-
     }
-    
 
+    @CacheEvict(value = "clients", allEntries = true)
     public ClientRequest createClient(ClientRequest clientRequest) {
-
         validateCep(clientRequest.getCep());
 
         boolean clientExists = clientRepository.findByEmail(clientRequest.getEmail()) != null ||
-        clientRepository.findByCpf(clientRequest.getCpf()) != null ||
-        clientRepository.findByCnh(clientRequest.getCnh()) != null;
-                               
+                clientRepository.findByCpf(clientRequest.getCpf()) != null;
+                clientRepository.findByCnh(clientRequest.getCnh());
+
         if (clientExists) {
             throw new DuplicateRegisterException("Cliente já cadastrado.");
         }
@@ -85,9 +83,10 @@ public class ClientService {
         return modelMapper.map(clientEntity, ClientRequest.class);
     }
 
+    @CacheEvict(value = "clients", allEntries = true)
     public void deleteClientbyId(Long id) {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
-        
+
         if (clientOptional.isEmpty()) {
             throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado");
         }
@@ -118,9 +117,10 @@ public class ClientService {
         clientRepository.save(clientEntity);
     }
 
+    @Cacheable(value = "clients", key = "#id")  // Cache para atualização parcial
     public ClientRequest updateClientById(Long id, ClientRequest clientRequest) {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
-        
+
         if (clientOptional.isEmpty()) {
             throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado");
         }
@@ -134,9 +134,10 @@ public class ClientService {
         return modelMapper.map(clientEntity, ClientRequest.class);
     }
 
+    @CachePut(value = "clients", key = "#client.id") // Cache para atualização parcial
     public ClientRequest partialUpdateClientById(Long id, Map<String, Object> updates) {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
-        
+
         if (clientOptional.isEmpty()) {
             throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado");
         }
@@ -211,5 +212,4 @@ public class ClientService {
             throw new FieldInvalidException("CEP inválido: " + cep);
         }
     }
-
 }
