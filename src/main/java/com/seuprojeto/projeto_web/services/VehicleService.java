@@ -37,10 +37,10 @@ public class VehicleService {
     @CacheEvict(value = "vehicle", allEntries = true)
     public VehicleEntity registerVehicle(VehicleRequest veiculo) {
         if (vehicleRepository.findByPlate(veiculo.getPlate()).isPresent()) {
-            throw new DuplicateRegisterException("Veículo com está placa já cadastrado");
+            throw new DuplicateRegisterException("Vehicle with this plate already registered");
         }
         if (!categoryRepository.existsById(veiculo.getCategoryId())) {
-            throw new EntityNotFoundException("Categoria com ID " + veiculo.getCategoryId() + " não existe.");
+            throw new EntityNotFoundException("Category with ID " + veiculo.getCategoryId() + " does not exist.");
         }
 
         VehicleEntity vehicleEntity = modelMapper.map(veiculo, VehicleEntity.class);
@@ -63,12 +63,12 @@ public class VehicleService {
     @CacheEvict(value = "vehicle", allEntries = true)
     public VehicleEntity editVehicle(Long id, VehicleEntity veiculoAtualizado) {
         VehicleEntity veiculo = vehicleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
 
         boolean isRent = rentalRepository.existsByVehicleIdAndDataFimIsNull(id);
 
         if (isRent) {
-            throw new RuntimeException("Não é possível editar um veículo que está com aluguel em curso");
+            throw new RuntimeException("It is not possible to edit a vehicle that is currently on lease.");
         }
 
         BeanUtils.copyProperties(veiculoAtualizado, veiculo, "id");
@@ -80,12 +80,12 @@ public class VehicleService {
     @CacheEvict(value = "vehicle", allEntries = true)
     public void deleteVehicleById(Long id) {
         VehicleEntity veiculo = vehicleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
         
         boolean isRent = rentalRepository.existsByVehicleIdAndDataFimIsNull(id);
         
         if (isRent) {
-            throw new RuntimeException("Não é possível editar um veículo que está com aluguel em curso");
+            throw new RuntimeException("It is not possible to edit a vehicle that is currently on lease.");
         }
 
         vehicleRepository.delete(veiculo);

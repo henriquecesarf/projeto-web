@@ -25,7 +25,7 @@ public class CategoryService {
     @CacheEvict(value = "categories", allEntries = true)
     public CategoryRequest createCategory(CategoryRequest categoryDTO) {
         if (categoryRepository.existsByName(categoryDTO.getName())) {
-            throw new IllegalArgumentException("A categoria com esse nome já existe.");
+            throw new IllegalArgumentException("The category with that name already exists.");
         }
         CategoryEntity categoryEntity = modelMapper.map(categoryDTO, CategoryEntity.class);
         categoryRepository.save(categoryEntity);
@@ -36,7 +36,7 @@ public class CategoryService {
     @CacheEvict(value = "categories", key = "#id")
     public CategoryRequest updateCategory(Long id, CategoryRequest categoryDTO) {
         CategoryEntity categoryEntity = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada."));
+                .orElseThrow(() -> new RuntimeException("Category not found."));
         modelMapper.map(categoryDTO, categoryEntity);
         categoryRepository.save(categoryEntity);
         return modelMapper.map(categoryEntity, CategoryRequest.class);
@@ -46,7 +46,7 @@ public class CategoryService {
     @CacheEvict(value = "categories", key = "#id")
     public void deleteCategory(Long id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada."));
+                .orElseThrow(() -> new RuntimeException("Category not found."));
         categoryRepository.delete(categoryEntity);
     }
 
@@ -62,7 +62,7 @@ public class CategoryService {
     @Cacheable(value = "categories", key = "#id")
     public CategoryRequest getCategory(Long id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada."));
+                .orElseThrow(() -> new RuntimeException("Category not found."));
         return modelMapper.map(categoryEntity, CategoryRequest.class);
     }
 }

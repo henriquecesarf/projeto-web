@@ -14,16 +14,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RentalCheckoutRequest {
 
-    @NotNull(message = "A data e hora da devolução do veículo é obrigatória.")
+    @NotNull(message = "The date and time of vehicle return is mandatory.")
     private LocalDateTime rentalDateTimeEnd;
 
-    @NotNull(message = "A kilometragem de devolução do veículo é obrigatoria.")
+    @NotNull(message = "Vehicle return mileage is mandatory.")
     private Double returnMileage;
 
-    @NotNull(message = "O valor do pagamento recebido é obrigatorio.")
+    @NotNull(message = "The amount of payment received is mandatory.")
     private Double amountPaid;
 
-    @PositiveOrZero(message = "O valor referente a cobrança dos sinistros deve ser maior ou igual a zero.")
+    @PositiveOrZero(message = "The amount corresponding to the collection of claims must be greater than or equal to zero.")
     private Double valuesSinisters;
 
     private List<LostOptionalRequest> lostOptionals;

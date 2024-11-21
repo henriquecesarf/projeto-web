@@ -75,7 +75,7 @@ public class ClientService {
                 clientRepository.findByCnh(clientRequest.getCnh());
 
         if (clientExists) {
-            throw new DuplicateRegisterException("Cliente já cadastrado.");
+            throw new DuplicateRegisterException("Customer already registered.");
         }
 
         ClientEntity clientEntity = modelMapper.map(clientRequest, ClientEntity.class);
@@ -88,12 +88,12 @@ public class ClientService {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
 
         if (clientOptional.isEmpty()) {
-            throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado");
+            throw new EntityNotFoundException("Customer with ID " + id + " not found");
         }
 
         // Verifica se o cliente possui locações ativas
         if (rentalRepository.existsByClientIdAndIsActiveTrue(id)) {
-            throw new FieldInvalidException("Não é possível remover o cliente com locação ativa.");
+            throw new FieldInvalidException("Unable to remove client with active lease.");
         }
 
         ClientEntity clientEntity = clientOptional.get();
@@ -108,8 +108,8 @@ public class ClientService {
         clientEntity.setCnh("XXXXXXXXXXX");
         clientEntity.setCnhDtMaturity(LocalDate.of(1900, 1, 1));
         clientEntity.setCep("XXXXX-XXX");
-        clientEntity.setAddress("Endereço Pseudonimizado");
-        clientEntity.setComplement("Complemento Pseudonimizado");
+        clientEntity.setAddress("Pseudonymized Address");
+        clientEntity.setComplement("Pseudonymized Address");
 
         clientEntity.setStExcluido(true);
 
@@ -122,7 +122,7 @@ public class ClientService {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
 
         if (clientOptional.isEmpty()) {
-            throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado");
+            throw new EntityNotFoundException("Customer with ID " + id + " not found");
         }
 
         ClientEntity clientEntity = clientOptional.get();
@@ -139,7 +139,7 @@ public class ClientService {
         Optional<ClientEntity> clientOptional = clientRepository.findById(id);
 
         if (clientOptional.isEmpty()) {
-            throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado");
+            throw new EntityNotFoundException("Customer with ID " + id + " not found");
         }
 
         ClientEntity clientEntity = clientOptional.get();
@@ -201,7 +201,7 @@ public class ClientService {
     public void validateCep(String cep) {
 
         if (!Pattern.matches("\\d{8}", cep)) {
-            throw new FieldInvalidException("O Cep deve conter apenas 8 caracteres, sendo eles números");
+            throw new FieldInvalidException("The zip code must contain only 8 characters, which must be numbers.");
         }
 
         String url = "https://viacep.com.br/ws/" + cep + "/json/";
@@ -209,7 +209,7 @@ public class ClientService {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
         if (response.getBody().contains("\"erro\": \"true\"")) {
-            throw new FieldInvalidException("CEP inválido: " + cep);
+            throw new FieldInvalidException("Invalid zip code: " + cep);
         }
     }
 }

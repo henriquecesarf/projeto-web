@@ -15,27 +15,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RentalRequest {
 
-    @NotNull(message = "O id do cliente do veículo é obrigatória.")
+    @NotNull(message = "The client ID of the vehicle is required.")
     private Long clientId;
 
-    @NotNull(message = "A id do veículo é obrigatório.")
+    @NotNull(message = "The vehicle ID is required.")
     private Long vehicleId;
 
     private List<OptionalRequest> optionals;
 
-    @NotNull(message = "A data e hora da locação do veículo é obrigatória.")
+    @NotNull(message = "The start date and time of the vehicle rental is required.")
     private LocalDateTime rentalDateTimeStart;
 
-    @NotNull(message = "O total de diarias do veículo é obrigatória.")
+    @NotNull(message = "The total number of rental days is required.")
     private Integer totalDays;
 
-    @NotNull(message = "O valor da caução do veículo é obrigatória.")
+    @NotNull(message = "The deposit amount for the vehicle is required.")
     private Double depositAmount;
 
-    @NotNull(message = "A km inicial do veículo é obrigatória.")
+    @NotNull(message = "The initial mileage of the vehicle is required.")
     private Double initialMileage;
 
-    @NotNull(message = "O estados da locação do vehicle é obrigatória.")
+    @NotNull(message = "The rental status of the vehicle is required.")
     private boolean isActive = true;
 
     @Data

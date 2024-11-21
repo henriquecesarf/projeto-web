@@ -10,52 +10,53 @@ import com.seuprojeto.projeto_web.enums.Exchange;
 @Data
 public class VehicleRequest {
 
-    @NotBlank(message = "O nome do veículo é obrigatório.")
+    @NotBlank(message = "The vehicle name is required.")
     private String name;
 
-    @NotBlank(message = "O fabricante é obrigatório.")
+    @NotBlank(message = "The manufacturer is required.")
     private String manufacturer;
 
-    @NotBlank(message = "A versão é obrigatória.")
+    @NotBlank(message = "The version is required.")
     private String version;
 
-    @NotBlank(message = "A URL FIPE é obrigatória.")
+    @NotBlank(message = "The FIPE URL is required.")
     private String urlFipe;
 
-    @NotBlank(message = "A placa é obrigatória.")
-    @Size(min = 7, max = 7, message = "A placa deve ter exatamente 7 caracteres.")
+    @NotBlank(message = "The license plate is required.")
+    @Size(min = 7, max = 7, message = "The license plate must have exactly 7 characters.")
     private String plate;
 
-    @NotBlank(message = "A cor é obrigatória.")
+    @NotBlank(message = "The color is required.")
     private String color;
 
-    @NotNull(message = "O tipo de câmbio é obrigatório.")
+    @NotNull(message = "The type of transmission is required.")
     private Exchange exchange;
 
-    @NotNull(message = "A quilometragem é obrigatória.")
-    @PositiveOrZero(message = "A quilometragem deve ser um valor positivo ou zero.")
+    @NotNull(message = "The mileage is required.")
+    @PositiveOrZero(message = "The mileage must be a positive value or zero.")
     private Double km;
 
-    @NotNull(message = "A capacidade de passageiros é obrigatória.")
-    @Min(value = 1, message = "A capacidade de passageiros deve ser no mínimo 1.")
+    @NotNull(message = "The passenger capacity is required.")
+    @Min(value = 1, message = "The passenger capacity must be at least 1.")
     private Integer capacityPassengers;
 
-    @NotNull(message = "O volume de carga é obrigatório.")
-    @PositiveOrZero(message = "O volume de carga deve ser um valor positivo ou zero.")
+    @NotNull(message = "The cargo volume is required.")
+    @PositiveOrZero(message = "The cargo volume must be a positive value or zero.")
     private Integer volumeLoad;
 
-    @NotNull(message = "A disponibilidade do veículo é obrigatória.")
+    @NotNull(message = "The vehicle availability is required.")
     private Boolean available = true;
 
-    @NotEmpty(message = "Os acessórios são obrigatórios.")
+    @NotEmpty(message = "Accessories are required.")
     private List<String> accessories;
 
-    @NotNull(message = "O valor da diária é obrigatório.")
-    @Positive(message = "O valor da diária deve ser um valor positivo.")
+    @NotNull(message = "The daily rate is required.")
+    @Positive(message = "The daily rate must be a positive value.")
     private Double valuedaily;
 
-    @NotNull(message = "A categoria do veículo é obrigatória.")
+    @NotNull(message = "The vehicle category is required.")
     private Long categoryId;
+
 
     public VehicleRequest() {
     }

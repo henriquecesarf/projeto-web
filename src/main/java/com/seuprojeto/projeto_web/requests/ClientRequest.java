@@ -18,55 +18,56 @@ import lombok.Setter;
 @Getter
 public class ClientRequest {
 
-    @NotBlank(message = "Nome é obrigatório")
+    @NotBlank(message = "Name is required")
     private String name;
 
-    @NotBlank(message = "Sobrenome é obrigatório")
+    @NotBlank(message = "Surname is required")
     private String surname;
 
-    @NotBlank(message = "CPF é obrigatório")
-    @CPF(message = "CPF deve ser válido")
+    @NotBlank(message = "CPF is required")
+    @CPF(message = "CPF must be valid")
     private String cpf;
 
-    @CNPJ(message = "CNPJ deve ser válido")
+    @CNPJ(message = "CNPJ must be valid")
     private String cnpj;
 
-    @NotBlank(message = "Email é obrigatório")
-    @Email(message = "Email deve ser válido")
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email must be valid")
     private String email;
 
-    @NotNull(message = "Sexo é obrigatório")
+    @NotNull(message = "Gender is required")
     private Sexo sexo;
-    
-    @NotNull(message = "Data Nascimento é obrigatório")
+
+    @NotNull(message = "Date of Birth is required")
     private LocalDate dtNascimento;
 
-    @NotBlank(message = "CNH é obrigatório")
+    @NotBlank(message = "Driver's license is required")
     private String cnh;
 
-    @NotNull(message = "Categoria CNH é obrigatório")
+    @NotNull(message = "Driver's license category is required")
     private CnhCategory cnhCategory;
 
-    @NotNull(message = "Data Vencimento CNH é obrigatório")
+    @NotNull(message = "Driver's license expiration date is required")
     private LocalDate cnhDtMaturity;
 
-    @NotBlank(message = "CEP é obrigatório")
+    @NotBlank(message = "Postal code is required")
     private String cep;
 
-    @NotBlank(message = "Endereço é obrigatório")
+    @NotBlank(message = "Address is required")
     private String address;
 
-    @NotBlank(message = "Pais é obrigatório")
+    @NotBlank(message = "Country is required")
     private String country;
 
-    @NotBlank(message = "Cidade é obrigatório")
+    @NotBlank(message = "City is required")
     private String city;
 
-    @NotBlank(message = "Estado é obrigatório")
+    @NotBlank(message = "State is required")
     private String state;
 
-    @NotBlank(message = "Complemento é obrigatório")
+    @NotBlank(message = "Complement is required")
     private String complement;
+
 
     public ClientRequest() {}
 
