@@ -66,7 +66,7 @@ public class VehicleEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     @JsonIgnore
     private CategoryEntity category; //categoria
 
