@@ -4,6 +4,7 @@ package com.seuprojeto.projeto_web.controllers;
 import com.seuprojeto.projeto_web.entities.VehicleEntity;
 import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
 import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
+import com.seuprojeto.projeto_web.requests.VehicleEditRequest;
 import com.seuprojeto.projeto_web.requests.VehicleRequest;
 import com.seuprojeto.projeto_web.services.VehicleService;
 
@@ -29,7 +30,7 @@ public class VehicleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VehicleEntity> editVehicle(@PathVariable Long id, @RequestBody VehicleEntity veiculoAtualizado) {
+    public ResponseEntity<VehicleEntity> editVehicle(@PathVariable Long id,@Valid @RequestBody VehicleEditRequest veiculoAtualizado) {
         return ResponseEntity.ok(veiculoService.editVehicle(id, veiculoAtualizado));
     }
 
@@ -42,6 +43,12 @@ public class VehicleController {
     @GetMapping
     public ResponseEntity<List<VehicleEntity>> listarVeiculos() {
         return ResponseEntity.ok(veiculoService.listVehicles());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<VehicleEntity> getById(@PathVariable Long id) throws EntityNotFoundException {
+        VehicleEntity veiculo = veiculoService.getVehicleById(id);
+        return ResponseEntity.ok(veiculo);
     }
 
     @GetMapping("/disponiveis")

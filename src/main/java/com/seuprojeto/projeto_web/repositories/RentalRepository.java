@@ -11,10 +11,6 @@ public interface RentalRepository extends JpaRepository<RentalEntity, Long>{
     // Verificar se existem locações ativas para um cliente
     boolean existsByClientIdAndIsActiveTrue(Long clientId);
 
-    default boolean existsByVehicleIdAndDataFimIsNull(Long veiculoId) {
-        return false;
-    }
-
     boolean existsByVehicleAndIsActiveTrue(VehicleEntity vehicle);
 
     boolean existsByIdAndIsActiveTrue(Long rentalId);
@@ -22,5 +18,7 @@ public interface RentalRepository extends JpaRepository<RentalEntity, Long>{
     List<RentalEntity> findByClientId(Long id);
 
     List<RentalEntity> findAllByClientIdAndIsActiveFalse(Long clientId);
+
+    List<RentalEntity> findAllByVehicleId(Long vehicleId);
 
 }

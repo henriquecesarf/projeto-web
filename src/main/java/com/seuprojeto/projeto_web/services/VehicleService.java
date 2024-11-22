@@ -1,6 +1,7 @@
 package com.seuprojeto.projeto_web.services;
 
 
+import com.seuprojeto.projeto_web.entities.RentalEntity;
 import com.seuprojeto.projeto_web.entities.VehicleEntity;
 import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
 import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
@@ -8,7 +9,6 @@ import com.seuprojeto.projeto_web.repositories.CategoryRepository;
 import com.seuprojeto.projeto_web.repositories.RentalRepository;
 import com.seuprojeto.projeto_web.repositories.VehicleRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import com.seuprojeto.projeto_web.requests.*;
 
@@ -61,18 +62,32 @@ public class VehicleService {
     }
 
     @CacheEvict(value = "vehicle", allEntries = true)
-    public VehicleEntity editVehicle(Long id, VehicleEntity veiculoAtualizado) {
-        VehicleEntity veiculo = vehicleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+    public VehicleEntity editVehicle(Long id, VehicleEditRequest veiculoAtualizado) {
 
-        boolean isRent = rentalRepository.existsByVehicleIdAndDataFimIsNull(id);
+        VehicleEntity veiculo = vehicleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"));
+
+        boolean isRent = rentalRepository.existsByVehicleAndIsActiveTrue(veiculo);
 
         if (isRent) {
-            throw new RuntimeException("It is not possible to edit a vehicle that is currently on lease.");
+            throw new DuplicateRegisterException("It is not possible to edit a vehicle that is currently on rental.");
         }
 
-        BeanUtils.copyProperties(veiculoAtualizado, veiculo, "id");
+        veiculo.setCategory(categoryRepository.findById(veiculoAtualizado.getCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Category not found")));
 
+        veiculo.setName(veiculoAtualizado.getName());
+        veiculo.setManufacturer(veiculoAtualizado.getManufacturer());
+        veiculo.setVersion(veiculoAtualizado.getVersion());
+        veiculo.setUrlFipe(veiculoAtualizado.getUrlFipe());
+        veiculo.setColor(veiculoAtualizado.getColor());
+        veiculo.setExchange(veiculoAtualizado.getExchange());
+        veiculo.setKm(veiculoAtualizado.getKm());
+        veiculo.setCapacityPassengers(veiculoAtualizado.getCapacityPassengers());
+        veiculo.setVolumeLoad(veiculoAtualizado.getVolumeLoad());
+        veiculo.setAvailable(veiculoAtualizado.getAvailable());
+        veiculo.setAccessories(veiculoAtualizado.getAccessories());
+        veiculo.setValuedaily(veiculoAtualizado.getValuedaily());
 
         return vehicleRepository.save(veiculo);
     }
@@ -80,20 +95,38 @@ public class VehicleService {
     @CacheEvict(value = "vehicle", allEntries = true)
     public void deleteVehicleById(Long id) {
         VehicleEntity veiculo = vehicleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"));
         
-        boolean isRent = rentalRepository.existsByVehicleIdAndDataFimIsNull(id);
+        boolean isRent = rentalRepository.existsByVehicleAndIsActiveTrue(veiculo);
         
         if (isRent) {
-            throw new RuntimeException("It is not possible to edit a vehicle that is currently on lease.");
+            throw new DuplicateRegisterException("It is not possible to edit a vehicle that is currently on rental.");
         }
 
+        List<RentalEntity> rentals = rentalRepository.findAllByVehicleId(id);
+
+        // Remove a referência do veículo em cada locação
+        for (RentalEntity rental : rentals) {
+            rental.setVehicle(null);
+            rentalRepository.save(rental);
+        }
+    
         vehicleRepository.delete(veiculo);
     }
 
     @Cacheable(value = "vehicle", key = "'all_vehicle'")
     public List<VehicleEntity> listVehicles() {
         return vehicleRepository.findAll();
+    }
+
+    public VehicleEntity getVehicleById(Long vehicleId){
+        Optional<VehicleEntity> veiculo = vehicleRepository.findById(vehicleId);
+
+        if (veiculo.isEmpty()) {
+            throw new EntityNotFoundException("Vehicle with ID: " + vehicleId + " not found");
+        }
+
+        return veiculo.get();
     }
 
     @Cacheable(value = "vehicle", key = "'#id'")

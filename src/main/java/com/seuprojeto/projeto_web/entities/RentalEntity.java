@@ -19,14 +19,14 @@ public class RentalEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "client_id")
     @JsonIgnore
-    private ClientEntity client; // // Referência ao cliente associado
+    private ClientEntity client; // Chave estrangeira para o cliente associado
 
     @ManyToOne
-    @JoinColumn(name = "vehicle_id", nullable = false) // Chave estrangeira para o veículo
+    @JoinColumn(name = "vehicle_id")
     @JsonIgnore
-    private VehicleEntity vehicle; // Referência ao veículo associado
+    private VehicleEntity vehicle; // Chave estrangeira para o veículo associado
 
     @Column(nullable = true)
     private String optionals; // String JSON para armazenar IDs e quantidades dos opcionais
@@ -74,7 +74,7 @@ public class RentalEntity {
         registrationDate = LocalDateTime.now();
     }
 
-    @OneToMany(mappedBy = "rental")
+    @OneToMany(mappedBy = "rental", cascade = CascadeType.REMOVE)
     private List<RentalSinister> rentalSinisters = new ArrayList<>();
 
     @Override
