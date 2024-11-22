@@ -48,10 +48,10 @@ public class ClientController {
 
     @Operation(
             summary = "Get por ID de cliente",
-            description = "Endpoint para obter os dados de um cliente em específica.\n\n"
+            description = "Endpoint para obter os dados de um cliente em específico.\n\n"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200" , description = "Retorna um Json com os dados do cliente consultada"),
+            @ApiResponse(responseCode = "200" , description = "Retorna um Json com os dados do cliente consultado"),
     })
     @GetMapping("/{id}")
     public ResponseEntity<ClientRequest> getById(@PathVariable Long id) throws EntityNotFoundException {
