@@ -71,12 +71,13 @@ public class ClientRequest {
 
     public ClientRequest() {}
 
-    public ClientRequest(String name, String surname, String cpf, String email, Sexo sexo, LocalDate dtNascimento,
+    public ClientRequest(String name, String surname, String cpf, String cnpj, String email, Sexo sexo, LocalDate dtNascimento,
             String cnh, CnhCategory cnhCategory, LocalDate cnhDtMaturity, String cep, String address, String country,
             String city, String state, String complement) {
         this.name = name;
         this.surname = surname;
         this.cpf = cpf;
+        this.cnpj = cnpj;
         this.email = email;
         this.sexo = sexo;
         this.dtNascimento = dtNascimento;

@@ -1,6 +1,9 @@
 package com.seuprojeto.projeto_web.services;
 
 import com.seuprojeto.projeto_web.entities.CategoryEntity;
+import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
+import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
+import com.seuprojeto.projeto_web.exceptions.FieldInvalidException;
 import com.seuprojeto.projeto_web.repositories.CategoryRepository;
 import com.seuprojeto.projeto_web.requests.CategoryRequest;
 import org.modelmapper.ModelMapper;
@@ -24,8 +27,8 @@ public class CategoryService {
     // Método para criar uma categoria e limpar o cache após salvar
     @CacheEvict(value = "categories", allEntries = true)
     public CategoryRequest createCategory(CategoryRequest categoryDTO) {
-        if (categoryRepository.existsByName(categoryDTO.getName())) {
-            throw new IllegalArgumentException("The category with that name already exists.");
+        if (categoryRepository.findByName(categoryDTO.getName()).isPresent()) {
+            throw new DuplicateRegisterException("The category with that name already exists.");
         }
         CategoryEntity categoryEntity = modelMapper.map(categoryDTO, CategoryEntity.class);
         categoryRepository.save(categoryEntity);
@@ -36,7 +39,7 @@ public class CategoryService {
     @CacheEvict(value = "categories", key = "#id")
     public CategoryRequest updateCategory(Long id, CategoryRequest categoryDTO) {
         CategoryEntity categoryEntity = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Category with ID " + id + " not found"));
         modelMapper.map(categoryDTO, categoryEntity);
         categoryRepository.save(categoryEntity);
         return modelMapper.map(categoryEntity, CategoryRequest.class);
@@ -46,7 +49,7 @@ public class CategoryService {
     @CacheEvict(value = "categories", key = "#id")
     public void deleteCategory(Long id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Category with ID " + id + " not found"));
         categoryRepository.delete(categoryEntity);
     }
 
@@ -62,7 +65,9 @@ public class CategoryService {
     @Cacheable(value = "categories", key = "#id")
     public CategoryRequest getCategory(Long id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Category with ID " + id + " not found"));
+
         return modelMapper.map(categoryEntity, CategoryRequest.class);
     }
 }
+

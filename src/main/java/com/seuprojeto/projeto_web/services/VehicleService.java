@@ -96,9 +96,11 @@ public class VehicleService {
         return vehicleRepository.findAll();
     }
 
-    @Cacheable(value = "vehicle", key = "'#id'")
-    public List<VehicleEntity> vehiclesAvailableForRent
-            (LocalDate start, LocalDate end) {
-        return vehicleRepository.findAvailableVehiclesForRent();
+    @Cacheable(value = "vehicle", key = "'#start.toString() + #end.toString()'")
+    public List<VehicleEntity> vehiclesAvailableForRent(LocalDateTime start, LocalDateTime end) {
+        // A data final é ajustada para o último minuto do dia
+        LocalDateTime endDateTime = end.plusMinutes(1);  // Para considerar até o último minuto do dia final
+
+        return vehicleRepository.findAvailableVehiclesForRent(start, endDateTime);
     }
 }

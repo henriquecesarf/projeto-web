@@ -7,13 +7,15 @@ import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.requests.VehicleRequest;
 import com.seuprojeto.projeto_web.services.VehicleService;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -45,8 +47,9 @@ public class VehicleController {
     }
 
     @GetMapping("/disponiveis")
-    public ResponseEntity<List<VehicleEntity>> veiculosDisponiveis(@RequestParam LocalDate inicio, @RequestParam LocalDate fim) {
-        return ResponseEntity.ok(veiculoService.vehiclesAvailableForRent(inicio, fim));
+    public ResponseEntity<List<VehicleEntity>> veiculosDisponiveis( @RequestParam LocalDateTime start,  @RequestParam LocalDateTime end) {
+        return ResponseEntity.ok(veiculoService.vehiclesAvailableForRent(start, end));
     }
+
 
 }

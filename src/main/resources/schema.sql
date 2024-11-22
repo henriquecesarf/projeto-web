@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS optional (
     qtd_available INT NOT NULL
 );
 
-CREATE TABLE category (
+CREATE TABLE IF NOT EXISTS category (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     fine_1_to_4_days DECIMAL(10, 2) NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE category (
     created_at TIMESTAMP NOT NULL
 );
 
-CREATE TABLE client (
+CREATE TABLE IF NOT EXISTS client (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     surname VARCHAR(255) NOT NULL,
