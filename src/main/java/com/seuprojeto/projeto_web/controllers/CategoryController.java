@@ -76,7 +76,7 @@ public class CategoryController {
             description = "Endpoint para obter uma categoria em específica.\n\n"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200" , description = "Retorna um Json com os dados da categoria consultada"),
+            @ApiResponse(responseCode = "200" , description = "Retornasa um Json com os dados da categoria consultada"),
     })
 
     @GetMapping("/{id}")
