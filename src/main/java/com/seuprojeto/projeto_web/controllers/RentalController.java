@@ -49,7 +49,7 @@ public class RentalController {
     }
 
     @Operation(
-            summary = "Get por ID",
+            summary = "Get por ID de aluguel",
             description = "Endpoint para obter uma aluguel em específico.\n\n"
     )
     @ApiResponses({
@@ -62,7 +62,7 @@ public class RentalController {
     }
 
     @Operation(
-            summary = "Post para cadastrar um aluguel",
+            summary = " Cadastro um aluguel",
             description = "Endpoint de cadastro de aluguel"
     )
     @ApiResponses({
@@ -75,8 +75,8 @@ public class RentalController {
     }
 
     @Operation(
-            summary = "Delete por ID do aluguel",
-            description = "Endpoint para fazer exclusão de um aluguel em específico.\n\n"
+            summary = "Delete de aluguel",
+            description = "Endpoint para fazer exclusão de um aluguel.\n\n"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = ""),
@@ -115,7 +115,7 @@ public class RentalController {
     }
 
     @Operation(
-            summary = "Get por ID do Cliente",
+            summary = "Get histórico por ID do Cliente",
             description = "Endpoint para obter o histórico de locação de um cliente em específico.\n\n"
     )
     @ApiResponses({

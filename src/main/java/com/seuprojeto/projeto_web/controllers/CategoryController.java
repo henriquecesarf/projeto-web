@@ -20,8 +20,8 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @Operation(
-            summary = "Post para Criar Categoria",
-            description = "End-point de criação de Categoria"
+            summary = "Criação categoria",
+            description = "End-point de criação de categoria"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Retorna um Json com o objeto da categoria criada"),
@@ -33,7 +33,7 @@ public class CategoryController {
     }
 
     @Operation(
-            summary = "Put de Categorias",
+            summary = "Alteração de categorias",
             description = "Endpoint para fazer a alteração de uma Categoria pelo ID.\n\n"
     )
     @ApiResponses({
@@ -46,8 +46,8 @@ public class CategoryController {
     }
 
     @Operation(
-            summary = "Delete por ID de Categoria",
-            description = "Endpoint para fazer Exclusão de um Veículo em específico.\n\n"
+            summary = "Delete de categoria",
+            description = "Endpoint para fazer Exclusão de uma categoria.\n\n"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = ""),
@@ -72,7 +72,7 @@ public class CategoryController {
     }
 
     @Operation(
-            summary = "Get por ID",
+            summary = "Get por ID de categoria",
             description = "Endpoint para obter uma categoria em específica.\n\n"
     )
     @ApiResponses({
