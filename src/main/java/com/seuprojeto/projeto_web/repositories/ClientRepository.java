@@ -15,6 +15,9 @@ public interface ClientRepository extends JpaRepository<ClientEntity, Long> {
     ClientEntity findByEmail(String email);
     //buscar um cliente pelo CPF
     ClientEntity findByCnh(String cnh);
+
+    ClientEntity findByCnpj(String cnpj); // Método para buscar pelo CNPJ
+;
     // Método para buscar um cliente pelo ID e st_excluido como false
     ClientEntity findByIdAndStExcluidoFalse(Long id);    
     // Método para buscar clientes com st_excluido como false
