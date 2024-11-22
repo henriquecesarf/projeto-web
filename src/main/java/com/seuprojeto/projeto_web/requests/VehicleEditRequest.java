@@ -41,7 +41,7 @@ public class VehicleEditRequest {
     private Integer volumeLoad;
 
     @NotNull(message = "The vehicle availability is required.")
-    private Boolean available = true;
+    private Boolean available;
 
     @NotEmpty(message = "Accessories are required.")
     private List<String> accessories;

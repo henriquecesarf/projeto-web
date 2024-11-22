@@ -74,7 +74,7 @@ public class RentalEntity {
         registrationDate = LocalDateTime.now();
     }
 
-    @OneToMany(mappedBy = "rental")
+    @OneToMany(mappedBy = "rental", cascade = CascadeType.REMOVE)
     private List<RentalSinister> rentalSinisters = new ArrayList<>();
 
     @Override

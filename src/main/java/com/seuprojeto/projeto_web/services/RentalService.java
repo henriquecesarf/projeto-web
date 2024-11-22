@@ -172,7 +172,15 @@ public class RentalService {
     public void deleteRentalbyId(Long id) {
         RentalEntity rentalEntity = rentalRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Rental not found."));
-                rentalRepository.delete(rentalEntity);
+
+        boolean isRentalActive = rentalRepository.existsByIdAndIsActiveTrue(id);
+
+        if (isRentalActive) {
+            throw new DuplicateRegisterException("It is not possible to delete a rental active.");
+        }
+
+
+        rentalRepository.delete(rentalEntity);
     }
 
     public RentalRequest updateRentalById(Long id, RentalRequest rentalRequest) {
@@ -532,15 +540,15 @@ public class RentalService {
     }
 
     public String calculateFinalValue(RentalEntity rental, RentalCheckoutRequest rentalCheckoutRequest, Double valueSinister) {
-        Long daysUsedByClient = ChronoUnit.DAYS.between(rental.getRentalDateTimeStart(), rentalCheckoutRequest.getRentalDateTimeEnd());
-    
+
         // Verifica se dataCheckin é anterior a dataCheckout
         if (rentalCheckoutRequest.getRentalDateTimeEnd().isBefore(rental.getRentalDateTimeStart())) {
             throw new DuplicateRegisterException("The return date cannot be earlier than the initial date of the vehicle rental");
         }
+
+        Long daysUsedByClient = ChronoUnit.DAYS.between(rental.getRentalDateTimeStart(), rentalCheckoutRequest.getRentalDateTimeEnd());
     
         Long lateDays = daysUsedByClient - rental.getTotalDays();
-    
         Double totalAmount;
         Double fineCategory = 0.0;
         Double valueDailyDelay = 0.0;
