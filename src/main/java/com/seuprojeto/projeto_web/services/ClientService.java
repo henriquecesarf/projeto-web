@@ -69,15 +69,24 @@ public class ClientService {
     @CacheEvict(value = "clients", allEntries = true)
     public ClientRequest createClient(ClientRequest clientRequest) {
         validateCep(clientRequest.getCep());
+        validateCnh(clientRequest.getCnh());
 
-        boolean clientExists = clientRepository.findByEmail(clientRequest.getEmail()) != null ||
-                clientRepository.findByCpf(clientRequest.getCpf()) != null;
-                clientRepository.findByCnh(clientRequest.getCnh());
+        boolean emailExists = clientRepository.findByEmail(clientRequest.getEmail()) != null;
+        boolean cpfExists = clientRepository.findByCpf(clientRequest.getCpf()) != null;
+        boolean cnpjExists = clientRepository.findByCnpj(clientRequest.getCnpj()) != null;
 
-        if (clientExists) {
-            throw new DuplicateRegisterException("Customer already registered.");
+        if (emailExists) {
+            throw new DuplicateRegisterException("Email already registered.");
+        }
+        if (cpfExists) {
+            throw new DuplicateRegisterException("CPF already registered.");
+        }
+        if (cnpjExists) {
+            throw new DuplicateRegisterException("CNPJ already registered.");
         }
 
+
+        // Se não existir, cria o cliente
         ClientEntity clientEntity = modelMapper.map(clientRequest, ClientEntity.class);
         clientRepository.save(clientEntity);
         return modelMapper.map(clientEntity, ClientRequest.class);
@@ -212,4 +221,16 @@ public class ClientService {
             throw new FieldInvalidException("Invalid zip code: " + cep);
         }
     }
+    public void validateCnh(String cnh) {
+        // Verifica se a CNH tem exatamente 11 números
+        if (!Pattern.matches("\\d{11}", cnh)) {
+            throw new FieldInvalidException("Invalid CNH format. It must contain exactly 11 digits.");
+        }
+
+        // Verifica se já existe um cliente com a mesma CNH no banco de dados
+        if (clientRepository.findByCnh(cnh) != null) {
+            throw new DuplicateRegisterException("Customer with this CNH already exists.");
+        }
+    }
+
 }
