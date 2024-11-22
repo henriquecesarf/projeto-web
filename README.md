@@ -198,7 +198,7 @@ A documentação detalhada para cada um dos endpoints pode ser acessada utilizan
 * [Robert Wilson](https://github.com/roberttmag)
 * [Milton Neto](https://github.com/koobotenMil)
 * [Rodrigo](https://github.com/Digo2088)
-* [Gabriel](https://github.com/GabrielinCode)
+* [Gabriel Fonseca](https://github.com/GabrielinCode)
 
 Orientador
 * [Paulo Reis](https://github.com/PHPauloReis)
