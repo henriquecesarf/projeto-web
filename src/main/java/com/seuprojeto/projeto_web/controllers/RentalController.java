@@ -169,7 +169,7 @@ public class RentalController {
     @Operation(
             summary = "Post para calcular o valor a pagar de um aluguel",
             description = "Endpoint de calculo do valor total a pagar de um aluguel através do ID do aluguel.\n" +
-                    "O calculo é feito através da soma do valor do veículo com a soma do valor de todos os sinistros, mais o valor total dos adicionais e das diárias.\n" +
+                    "O calculo é feito através da soma do valor do veículo com a soma do valor de todos os sinistros, mais o valor total dos adicionais e o valor total das diárias.\n" +
                     " São dados necessarios para o processo de cadadstro:\n" +
                     "- ID do aluguel que deseja vincular"
     )
