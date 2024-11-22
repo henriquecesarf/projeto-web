@@ -99,7 +99,7 @@ public class RentalController {
                  "- Atualização do status da locação"
 )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Locação finalizada com sucesso."),
+        @ApiResponse(responseCode = "200", description = "Retorna o Json da Locação criada."),
     })
     @PostMapping("/checkout/{rentalId}")
     public ResponseEntity<String> checkoutRental(@PathVariable Long rentalId,@Valid @RequestBody RentalCheckoutRequest rentalCheckoutRequest) throws EntityNotFoundException, DuplicateRegisterException, FieldInvalidException {
