@@ -28,7 +28,7 @@ public class VehicleController {
 
     @Operation(
             summary = "Criação veículo",
-            description = "End-point de criação de veículos"
+            description = "Endpoint de criação de veículos"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Retorna um Json com o objeto do veículo criado"),
@@ -40,10 +40,10 @@ public class VehicleController {
 
     @Operation(
             summary = "Alteração de veículos",
-            description = "Endpoint para fazer a alteração de uma veículos pelo ID.\n\n"
+            description = "Endpoint para fazer a alteração de um veículos pelo ID.\n\n"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Retorna um Json com os dados da veículo Alterado"),
+            @ApiResponse(responseCode = "200", description = "Retorna um Json com os dados da veículo alterado"),
     })
     @PutMapping("/{id}")
     public ResponseEntity<VehicleEntity> editVehicle(@PathVariable Long id, @RequestBody VehicleEntity veiculoAtualizado) {

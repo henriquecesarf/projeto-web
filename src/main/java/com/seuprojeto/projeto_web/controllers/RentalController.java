@@ -106,7 +106,7 @@ public class RentalController {
             description = "Endpoint para fazer a alteração parcial no Aluguel pelo ID.\n\n"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Retorna um Json com os dados da aluguel Alterada"),
+            @ApiResponse(responseCode = "200", description = "Retorna um Json com os dados do aluguel Alterado"),
     })
     @PatchMapping("/{id}")
     public ResponseEntity<RentalRequest> patchRental(@PathVariable Long id,@RequestBody RentalRequest updates) {

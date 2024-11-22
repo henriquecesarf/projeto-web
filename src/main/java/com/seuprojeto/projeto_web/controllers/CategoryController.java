@@ -21,7 +21,7 @@ public class CategoryController {
 
     @Operation(
             summary = "Criação categoria",
-            description = "End-point de criação de categoria"
+            description = "Endpoint de criação de categoria"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Retorna um Json com o objeto da categoria criada"),
