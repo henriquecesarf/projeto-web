@@ -76,20 +76,19 @@ public class VehicleController {
         return ResponseEntity.ok(veiculoService.listVehicles());
     }
 
+    @Operation(
+            summary = "Get por ID do Veículo",
+            description = "Endpoint para obter os dados de um veículo em específico.\n\n"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200" , description = "Retorna um Json com os dados do veículo consultado"),
+    })
     @GetMapping("/{id}")
     public ResponseEntity<VehicleEntity> getById(@PathVariable Long id) throws EntityNotFoundException {
         VehicleEntity veiculo = veiculoService.getVehicleById(id);
         return ResponseEntity.ok(veiculo);
     }
 
-<<<<<<< HEAD
-    @GetMapping("/{id}")
-    public ResponseEntity<VehicleEntity> getById(@PathVariable Long id) throws EntityNotFoundException {
-        VehicleEntity veiculo = veiculoService.getVehicleById(id);
-        return ResponseEntity.ok(veiculo);
-    }
-
-=======
     @Operation(
             summary = "Get todos os veículos disponíveis",
             description = "Endpoint para consultar todas as veículos que ainda não estão locados.\n\n"
@@ -97,7 +96,6 @@ public class VehicleController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Retorna um Json com todos os veículos"),
     })
->>>>>>> origin/Swagger-description
     @GetMapping("/disponiveis")
     public ResponseEntity<List<VehicleEntity>> veiculosDisponiveis(@RequestParam LocalDate inicio, @RequestParam LocalDate fim) {
         return ResponseEntity.ok(veiculoService.vehiclesAvailableForRent(inicio, fim));
