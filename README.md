@@ -176,8 +176,11 @@ Para criar ou atualizar um veiculo, utilize o seguinte modelo JSON:
 ### 3. **Comandos no Terminal**
 - Para iniciar a contrução do container no docker e iniciar a aplicação:
   ```bash
-  docker-compose up --build
-  docker-compose down
+  docker-compose up --build 
+  ```
+- Para derrubar o container:
+  ```bash
+   docker-compose down
   ```
 
 #### 5. **Conclusão**
