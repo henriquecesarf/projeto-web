@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.seuprojeto.projeto_web.entities.RoleEntity;
 import com.seuprojeto.projeto_web.entities.UserEntity;
-import com.seuprojeto.projeto_web.exceptions.FieldNotFoundException;
+import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.repositories.UserRepository;
 import com.seuprojeto.projeto_web.security.CreateUserDTO;
 import com.seuprojeto.projeto_web.security.LoginUserDTO;
@@ -44,7 +44,7 @@ public class UserService {
     public UserEntity findByUsername(String username){
         Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
         if(optionalUser.isEmpty()){
-            throw new FieldNotFoundException("User with ID " + username + " not found");
+            throw new EntityNotFoundException("User with ID " + username + " not found");
         }
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(optionalUser.get(), UserEntity.class);

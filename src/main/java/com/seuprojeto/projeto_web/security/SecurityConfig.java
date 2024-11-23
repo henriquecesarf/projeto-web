@@ -30,8 +30,8 @@ public class SecurityConfig {
                     "/swagger-ui.html"
                 ).permitAll()
                 .requestMatchers("api/users/**").permitAll()
-                // .requestMatchers("api/sinister/**", "api/sinister/**","api/client/**", "api/rental/**", "categories/**").permitAll()
-                .requestMatchers("api/sinister/**", "api/client/**", "api/rental/**", "api/categories/**").hasRole("USER")
+                .requestMatchers("api/rental/edit/**", "api/rental/delete/**").hasRole("ADMIN")
+                .requestMatchers("api/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().denyAll()).
                 addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

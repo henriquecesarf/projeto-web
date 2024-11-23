@@ -11,6 +11,8 @@ import com.seuprojeto.projeto_web.security.jwt.JwtTokenDTO;
 import com.seuprojeto.projeto_web.services.AuditLogService;
 import com.seuprojeto.projeto_web.services.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -20,6 +22,10 @@ public class UserController {
     @Autowired
     private AuditLogService auditLogService;
 
+    @Operation(
+            summary = "Endpoint para logar na api",
+            description = "É necessario logar para poder gerar o token e utilizar nas requisições.\n\n"
+    )
     @PostMapping("/login")
     public ResponseEntity<JwtTokenDTO> loginUser(@RequestBody LoginUserDTO loginUserDto) {
         JwtTokenDTO token = userService.authenticateUser(loginUserDto);
@@ -27,6 +33,10 @@ public class UserController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Endpoint para cadastrar um User",
+            description = "No campo 'role' só é permitido os valores 'ROLE_USER'(para usuarios comuns) e 'ROLE_ADMIN'(para usuarios administrativos).\n\n"
+    )
     @PostMapping
     public ResponseEntity<Void> postUser(@RequestBody CreateUserDTO createUserDto) {
         userService.saveUser(createUserDto);
