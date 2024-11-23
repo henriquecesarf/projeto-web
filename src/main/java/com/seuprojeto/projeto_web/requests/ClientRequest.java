@@ -92,4 +92,14 @@ public class ClientRequest {
         this.complement = complement;
     }
 
+    @Override
+    public String toString() {
+        return "[name=" + name + ", surname=" + surname + ", cpf=" + cpf + ", email=" + email + ", sexo="
+                + sexo + ", dtNascimento=" + dtNascimento + ", cnh=" + cnh + ", cnhCategory=" + cnhCategory
+                + ", cnhDtMaturity=" + cnhDtMaturity + ", cep=" + cep + ", address=" + address + ", country=" + country
+                + ", city=" + city + ", state=" + state + ", complement=" + complement + "]";
+    }
+
+    
+
 }
