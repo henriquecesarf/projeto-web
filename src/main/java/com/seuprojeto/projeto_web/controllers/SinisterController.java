@@ -24,6 +24,7 @@ public class SinisterController {
 
     @Autowired
     private SinisterService sinisterService;
+    @Autowired
 
     @Operation(
             summary = "Get todos os sinistros",

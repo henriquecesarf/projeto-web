@@ -16,6 +16,7 @@ import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
 import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
 import com.seuprojeto.projeto_web.exceptions.TableEmptyException;
 import com.seuprojeto.projeto_web.requests.ClientRequest;
+// import com.seuprojeto.projeto_web.services.AuditLogService;
 import com.seuprojeto.projeto_web.services.ClientService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +33,8 @@ public class ClientController {
 
     @Autowired
     private ClientService clientService;
+    // @Autowired
+    // private AuditLogService auditLogService;
 
     @Operation(
             summary = "Get todos os clientes",
@@ -81,6 +84,7 @@ public class ClientController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
+        // auditLogService.logDelete("Client", clientService.findClientById(id).toString());
         clientService.deleteClientbyId(id);
         return ResponseEntity.noContent().build();
     }

@@ -3,7 +3,6 @@ package com.seuprojeto.projeto_web.services;
 import com.seuprojeto.projeto_web.entities.CategoryEntity;
 import com.seuprojeto.projeto_web.exceptions.DuplicateRegisterException;
 import com.seuprojeto.projeto_web.exceptions.EntityNotFoundException;
-import com.seuprojeto.projeto_web.exceptions.FieldInvalidException;
 import com.seuprojeto.projeto_web.repositories.CategoryRepository;
 import com.seuprojeto.projeto_web.requests.CategoryRequest;
 import org.modelmapper.ModelMapper;

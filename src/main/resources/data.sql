@@ -1,12 +1,12 @@
 -- inserção de dados automatica ao rodar a aplicação
 
 -- inserção de usuarios
-INSERT INTO users (id, name, privilege) 
-VALUES 
-(1, 'supervisor', 'admin');
-INSERT INTO users (id, name, privilege) 
-VALUES 
-(2, 'funcionario', 'user');
+-- INSERT INTO users (id, name, privilege) 
+-- VALUES 
+-- (1, 'supervisor', 'admin');
+-- INSERT INTO users (id, name, privilege) 
+-- VALUES 
+-- (2, 'funcionario', 'user');
 
 -- inserção de sinistros
 INSERT INTO sinister (identification, gravity)

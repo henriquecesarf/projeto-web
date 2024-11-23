@@ -81,7 +81,7 @@ public class RentalController {
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = ""),
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteRental(@PathVariable Long id) {
         rentalService.deleteRentalbyId(id);
         return ResponseEntity.noContent().build();
@@ -95,7 +95,7 @@ public class RentalController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Retorna um Json com os dados da aluguel Alterada"),
     })
-    @PutMapping("/{id}")
+    @PutMapping("/edit/{id}")
     public ResponseEntity<RentalRequest> putRental(@PathVariable Long id,@Valid  @RequestBody RentalRequest rentalRequest) {
         RentalRequest updatedRental = rentalService.updateRentalById(id, rentalRequest);
         return ResponseEntity.ok(updatedRental);
