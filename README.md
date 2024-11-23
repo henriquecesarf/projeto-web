@@ -31,13 +31,14 @@ https://dear-creature-6bf.notion.site/Projeto-Web-2-2024-2-0c6c1c28636549c0b5287
 ## **Banco de Dados**
 O banco de dados é inicializado automaticamente com dados de exemplo ao rodar a aplicação. Isso inclui:
 
-- **Usuários** (com diferentes privilégios).
 - **Sinistros** (com identificações e gravidade).
 - **Opcionais** (itens adicionais para locação).
 - **Categorias de veículos**.
 - **Clientes** (com informações como CPF, CNH, e dados de contato).
 
 Esses dados já estarão disponíveis no banco assim que a API for iniciada.
+Serão necessarios cadastro de usuários pra poder logar e obter o token
+e cadastro de veículos.
 
 ---
 
@@ -197,7 +198,7 @@ A documentação detalhada para cada um dos endpoints pode ser acessada utilizan
 ## Contribuição
 
 * [Henrique Cesar](https://github.com/henriquecesarf)
-* [Alisson Jacó](https://github.com/alisonvmx)
+* [Alison Jacó](https://github.com/alisonvmx)
 * [Robert Wilson](https://github.com/roberttmag)
 * [Milton Neto](https://github.com/koobotenMil)
 * [Rodrigo](https://github.com/Digo2088)
